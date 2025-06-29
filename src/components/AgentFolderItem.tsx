@@ -1,5 +1,6 @@
 
 import { ChevronDown, ChevronUp, Folder } from 'lucide-react';
+import { Droppable } from 'react-beautiful-dnd';
 import { Agent, AgentFolder } from './types/agentTypes';
 import AgentItem from './AgentItem';
 
@@ -36,14 +37,30 @@ export default function AgentFolderItem({
       </div>
 
       {/* Agents in Folder */}
-      {folder.isExpanded && folder.agents.map((agent) => (
-        <AgentItem
-          key={agent.id}
-          agent={agent}
-          isSelected={selectedAgents.includes(agent.id)}
-          onToggleSelection={() => toggleAgentSelection(agent.id)}
-        />
-      ))}
+      {folder.isExpanded && (
+        <Droppable droppableId={folder.id}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`min-h-[4px] ${
+                snapshot.isDraggingOver ? 'bg-blue-50 border-l-4 border-blue-400' : ''
+              }`}
+            >
+              {folder.agents.map((agent, index) => (
+                <AgentItem
+                  key={agent.id}
+                  agent={agent}
+                  index={index}
+                  isSelected={selectedAgents.includes(agent.id)}
+                  onToggleSelection={() => toggleAgentSelection(agent.id)}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { AgentFolder } from './types/agentTypes';
 import AgentListHeader from './AgentListHeader';
 import AgentSearchControls from './AgentSearchControls';
@@ -98,6 +99,45 @@ export default function AgentList() {
     );
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const sourceFolderId = source.droppableId;
+    const destinationFolderId = destination.droppableId;
+
+    const newFolders = [...folders];
+    const sourceFolder = newFolders.find(f => f.id === sourceFolderId);
+    const destinationFolder = newFolders.find(f => f.id === destinationFolderId);
+
+    if (!sourceFolder || !destinationFolder) {
+      return;
+    }
+
+    const draggedAgent = sourceFolder.agents.find(agent => agent.id === draggableId);
+    if (!draggedAgent) {
+      return;
+    }
+
+    // Remove agent from source folder
+    sourceFolder.agents = sourceFolder.agents.filter(agent => agent.id !== draggableId);
+
+    // Add agent to destination folder
+    destinationFolder.agents.splice(destination.index, 0, draggedAgent);
+
+    setFolders(newFolders);
+  };
+
   const filteredFolders = folders.map(folder => ({
     ...folder,
     agents: folder.agents.filter(agent =>
@@ -120,17 +160,19 @@ export default function AgentList() {
       <div className="flex-1 overflow-auto">
         <AgentTableHeader />
 
-        <div className="bg-white">
-          {filteredFolders.map((folder) => (
-            <AgentFolderItem
-              key={folder.id}
-              folder={folder}
-              selectedAgents={selectedAgents}
-              toggleFolder={toggleFolder}
-              toggleAgentSelection={toggleAgentSelection}
-            />
-          ))}
-        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="bg-white">
+            {filteredFolders.map((folder) => (
+              <AgentFolderItem
+                key={folder.id}
+                folder={folder}
+                selectedAgents={selectedAgents}
+                toggleFolder={toggleFolder}
+                toggleAgentSelection={toggleAgentSelection}
+              />
+            ))}
+          </div>
+        </DragDropContext>
       </div>
 
       <AgentSelectionFooter selectedCount={selectedAgents.length} />
