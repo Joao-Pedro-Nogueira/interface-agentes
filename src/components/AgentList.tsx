@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, Plus, ChevronDown, ChevronUp, Folder } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -174,7 +173,7 @@ export default function AgentList() {
       {/* Agent List */}
       <div className="flex-1 overflow-auto">
         {/* Table Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
           <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
             <div className="col-span-1"></div>
             <div className="col-span-3">Nome do Agente</div>
@@ -192,7 +191,7 @@ export default function AgentList() {
             <div key={folder.id}>
               {/* Folder Header */}
               <div 
-                className="folder-header px-6 py-3 bg-gray-50 border-b border-gray-100"
+                className="folder-header px-4 py-3 bg-gray-50 border-b border-gray-100"
                 onClick={() => toggleFolder(folder.id)}
               >
                 <div className="flex items-center">
@@ -209,7 +208,7 @@ export default function AgentList() {
 
               {/* Agents in Folder */}
               {folder.isExpanded && folder.agents.map((agent) => (
-                <div key={agent.id} className="agent-item px-6 py-4">
+                <div key={agent.id} className="agent-item px-4 py-4">
                   <div className="grid grid-cols-12 gap-4 items-center">
                     <div className="col-span-1">
                       <input
@@ -221,10 +220,7 @@ export default function AgentList() {
                     </div>
                     
                     <div className="col-span-3">
-                      <div className="flex items-center">
-                        <Search className="w-4 h-4 mr-2 text-gray-400" />
-                        <span className="font-medium text-gray-900">{agent.name}</span>
-                      </div>
+                      <span className="font-medium text-gray-900">{agent.name}</span>
                     </div>
                     
                     <div className="col-span-3">
@@ -261,7 +257,7 @@ export default function AgentList() {
 
       {/* Selection Footer */}
       {selectedAgents.length > 0 && (
-        <div className="bg-white border-t border-gray-200 px-6 py-4">
+        <div className="bg-white border-t border-gray-200 px-4 py-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
               {selectedAgents.length} agente{selectedAgents.length > 1 ? 's' : ''} selecionado{selectedAgents.length > 1 ? 's' : ''}
