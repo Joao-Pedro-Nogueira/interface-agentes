@@ -1,6 +1,6 @@
 
 import { Draggable } from 'react-beautiful-dnd';
-import { move } from 'lucide-react';
+import { Move } from 'lucide-react';
 import { Agent } from './types/agentTypes';
 
 interface AgentItemProps {
@@ -27,7 +27,7 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection 
                 {...provided.dragHandleProps}
                 className="cursor-move p-1 hover:bg-gray-100 rounded"
               >
-                <move className="w-4 h-4 text-gray-400" />
+                <Move className="w-4 h-4 text-gray-400" />
               </div>
               <input
                 type="checkbox"
