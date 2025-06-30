@@ -86,8 +86,14 @@ export default function AutocompleteModal({ position, onSelect, onClose }: Autoc
   const [selectedCategory, setSelectedCategory] = useState<AutocompleteCategory | null>(null);
 
   useEffect(() => {
+    console.log('AutocompleteModal mounted, position:', position);
+  }, [position]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log('Key pressed in modal:', e.key);
       e.preventDefault();
+      e.stopPropagation();
       
       if (e.key === 'Escape') {
         onClose();
@@ -119,6 +125,7 @@ export default function AutocompleteModal({ position, onSelect, onClose }: Autoc
             prev > 0 ? prev - 1 : selectedCategory.items.length - 1
           );
         } else if (e.key === 'Enter') {
+          console.log('Selecting item:', selectedCategory.items[selectedItemIndex]);
           onSelect(selectedCategory.items[selectedItemIndex].value);
         } else if (e.key === 'ArrowLeft') {
           setCurrentView('categories');
@@ -127,17 +134,19 @@ export default function AutocompleteModal({ position, onSelect, onClose }: Autoc
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [currentView, selectedCategoryIndex, selectedItemIndex, selectedCategory, onSelect, onClose]);
 
   const handleCategoryClick = (category: AutocompleteCategory) => {
+    console.log('Category clicked:', category.label);
     setSelectedCategory(category);
     setCurrentView('items');
     setSelectedItemIndex(0);
   };
 
   const handleItemClick = (item: AutocompleteItem) => {
+    console.log('Item clicked:', item);
     onSelect(item.value);
   };
 
@@ -148,6 +157,7 @@ export default function AutocompleteModal({ position, onSelect, onClose }: Autoc
 
   return (
     <div
+      data-autocomplete-modal
       className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg min-w-48 max-w-64"
       style={{
         left: position.x,

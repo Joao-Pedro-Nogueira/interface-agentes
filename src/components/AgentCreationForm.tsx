@@ -22,19 +22,26 @@ export default function AgentCreationForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleInstructionsInsert = (value: string, position: number) => {
-    const newInstructions = 
-      formData.instructions.substring(0, position) + 
-      value + 
-      formData.instructions.substring(position + 1); // +1 to skip the '@' character
+    console.log('Inserting value:', value, 'at position:', position);
     
+    const textarea = autocomplete.textareaRef.current;
+    if (!textarea) return;
+
+    const currentText = formData.instructions;
+    const newInstructions = 
+      currentText.substring(0, position) + 
+      value + 
+      currentText.substring(position + 1); // +1 to skip the '@' character
+    
+    console.log('New instructions:', newInstructions);
     setFormData(prev => ({ ...prev, instructions: newInstructions }));
     
     // Set cursor position after the inserted text
     setTimeout(() => {
-      if (autocomplete.textareaRef.current) {
+      if (textarea) {
         const newPosition = position + value.length;
-        autocomplete.textareaRef.current.setSelectionRange(newPosition, newPosition);
-        autocomplete.textareaRef.current.focus();
+        textarea.setSelectionRange(newPosition, newPosition);
+        textarea.focus();
       }
     }, 0);
   };
@@ -45,8 +52,12 @@ export default function AgentCreationForm() {
 
   useEffect(() => {
     if (autocomplete.isOpen) {
+      console.log('Adding click outside listener');
       document.addEventListener('mousedown', autocomplete.handleClickOutside);
-      return () => document.removeEventListener('mousedown', autocomplete.handleClickOutside);
+      return () => {
+        console.log('Removing click outside listener');
+        document.removeEventListener('mousedown', autocomplete.handleClickOutside);
+      };
     }
   }, [autocomplete.isOpen, autocomplete.handleClickOutside]);
 
