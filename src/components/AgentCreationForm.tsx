@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, Image, Save, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AutocompleteModal from './AutocompleteModal';
+import { useAutocomplete } from '@/hooks/useAutocomplete';
 
 export default function AgentCreationForm() {
   const navigate = useNavigate();
@@ -19,6 +20,35 @@ export default function AgentCreationForm() {
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleInstructionsInsert = (value: string, position: number) => {
+    const newInstructions = 
+      formData.instructions.substring(0, position) + 
+      value + 
+      formData.instructions.substring(position + 1); // +1 to skip the '@' character
+    
+    setFormData(prev => ({ ...prev, instructions: newInstructions }));
+    
+    // Set cursor position after the inserted text
+    setTimeout(() => {
+      if (autocomplete.textareaRef.current) {
+        const newPosition = position + value.length;
+        autocomplete.textareaRef.current.setSelectionRange(newPosition, newPosition);
+        autocomplete.textareaRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const autocomplete = useAutocomplete({
+    onInsert: handleInstructionsInsert
+  });
+
+  useEffect(() => {
+    if (autocomplete.isOpen) {
+      document.addEventListener('mousedown', autocomplete.handleClickOutside);
+      return () => document.removeEventListener('mousedown', autocomplete.handleClickOutside);
+    }
+  }, [autocomplete.isOpen, autocomplete.handleClickOutside]);
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
@@ -187,19 +217,29 @@ export default function AgentCreationForm() {
           <TabsContent value="instrucoes" className="space-y-6">
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <h2 className="text-lg font-semibold mb-4">Instruções do Agente</h2>
-              <div>
+              <div className="relative">
                 <Label htmlFor="instructions">Prompt</Label>
                 <Textarea
+                  ref={autocomplete.textareaRef}
                   id="instructions"
                   value={formData.instructions}
                   onChange={(e) => handleInputChange('instructions', e.target.value)}
-                  placeholder="Digite as instruções detalhadas para o agente..."
+                  onKeyDown={autocomplete.handleKeyDown}
+                  placeholder="Digite as instruções detalhadas para o agente... Use @ para inserir variáveis dinâmicas."
                   rows={12}
                   className="mt-2"
                 />
                 <p className="text-sm text-gray-500 mt-2">
-                  Defina como o agente deve se comportar e responder às solicitações.
+                  Defina como o agente deve se comportar e responder às solicitações. Use @ para inserir variáveis dinâmicas.
                 </p>
+                
+                {autocomplete.isOpen && (
+                  <AutocompleteModal
+                    position={autocomplete.position}
+                    onSelect={autocomplete.handleSelect}
+                    onClose={autocomplete.handleClose}
+                  />
+                )}
               </div>
             </div>
           </TabsContent>
