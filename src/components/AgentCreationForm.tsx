@@ -4,9 +4,9 @@ import { ArrowLeft, Upload, Image, Save, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AutocompleteModal from './AutocompleteModal';
+import HighlightedTextarea from './HighlightedTextarea';
 import { useAutocomplete } from '@/hooks/useAutocomplete';
 
 export default function AgentCreationForm() {
@@ -213,12 +213,13 @@ export default function AgentCreationForm() {
 
               <div className="mt-6">
                 <Label htmlFor="summary">Resumo</Label>
-                <Textarea
+                <textarea
                   id="summary"
                   value={formData.summary}
                   onChange={(e) => handleInputChange('summary', e.target.value)}
                   placeholder="Descreva brevemente o que este agente faz..."
                   rows={3}
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2"
                 />
               </div>
             </div>
@@ -230,11 +231,11 @@ export default function AgentCreationForm() {
               <h2 className="text-lg font-semibold mb-4">Instruções do Agente</h2>
               <div className="relative">
                 <Label htmlFor="instructions">Prompt</Label>
-                <Textarea
+                <HighlightedTextarea
                   ref={autocomplete.textareaRef}
                   id="instructions"
                   value={formData.instructions}
-                  onChange={(e) => handleInputChange('instructions', e.target.value)}
+                  onChange={(value) => handleInputChange('instructions', value)}
                   onKeyDown={autocomplete.handleKeyDown}
                   placeholder="Digite as instruções detalhadas para o agente... Use @ para inserir variáveis dinâmicas."
                   rows={12}
