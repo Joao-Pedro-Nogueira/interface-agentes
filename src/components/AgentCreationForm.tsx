@@ -138,7 +138,7 @@ export default function AgentCreationForm() {
                         type="file"
                         accept="image/*"
                         onChange={handleImageUpload}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        className="w-full h-full opacity-0 cursor-pointer"
                       />
                     </div>
                   </div>
@@ -219,7 +219,7 @@ export default function AgentCreationForm() {
                   type="file"
                   multiple
                   onChange={handleFileUpload}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="w-full h-full opacity-0 cursor-pointer"
                 />
                 <Button variant="outline" size="sm">
                   Selecionar Arquivos
