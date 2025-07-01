@@ -173,17 +173,19 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
         overlay.style.whiteSpace = 'pre-wrap';
         overlay.style.wordWrap = 'break-word';
         overlay.style.overflowWrap = 'break-word';
+        overlay.style.width = computedStyle.width;
+        overlay.style.height = computedStyle.height;
       }
     }, []);
 
     return (
-      <div className="relative">
+      <div className="relative w-full">
         {/* Overlay with highlighted text */}
         <div
           ref={overlayRef}
           className={cn(
             "absolute inset-0 pointer-events-none overflow-hidden",
-            "text-sm bg-transparent",
+            "text-sm bg-transparent w-full",
             "whitespace-pre-wrap break-words",
             className
           )}
@@ -194,6 +196,8 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             outline: 'none',
             border: 'none',
             background: 'transparent',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           {renderHighlightedText()}
@@ -210,7 +214,7 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
           placeholder={placeholder}
           rows={rows}
           className={cn(
-            "relative bg-transparent text-transparent caret-black",
+            "relative bg-transparent text-transparent caret-black w-full",
             "resize-none outline-none",
             "px-3 py-2 text-sm",
             "border border-input rounded-md",
@@ -227,6 +231,8 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             color: 'transparent',
             caretColor: 'black',
             background: 'transparent',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         />
       </div>
