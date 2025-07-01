@@ -88,7 +88,7 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
       const matches = findMatches(value);
       
       if (matches.length === 0) {
-        return <span className="whitespace-pre whitespace-pre-wrap break-words">{value}</span>;
+        return <span className="whitespace-pre-wrap break-words">{value}</span>;
       }
 
       const parts: React.ReactNode[] = [];
@@ -149,6 +149,33 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
       }
     }, [scrollTop, scrollLeft]);
 
+    // Sync styles between textarea and overlay
+    useEffect(() => {
+      const textarea = textareaRef.current;
+      const overlay = overlayRef.current;
+      
+      if (textarea && overlay) {
+        const computedStyle = window.getComputedStyle(textarea);
+        
+        // Apply critical styles from textarea to overlay
+        overlay.style.fontFamily = computedStyle.fontFamily;
+        overlay.style.fontSize = computedStyle.fontSize;
+        overlay.style.fontWeight = computedStyle.fontWeight;
+        overlay.style.lineHeight = computedStyle.lineHeight;
+        overlay.style.letterSpacing = computedStyle.letterSpacing;
+        overlay.style.wordSpacing = computedStyle.wordSpacing;
+        overlay.style.padding = computedStyle.padding;
+        overlay.style.border = computedStyle.border;
+        overlay.style.borderWidth = computedStyle.borderWidth;
+        overlay.style.borderStyle = computedStyle.borderStyle;
+        overlay.style.borderColor = 'transparent';
+        overlay.style.boxSizing = computedStyle.boxSizing;
+        overlay.style.whiteSpace = 'pre-wrap';
+        overlay.style.wordWrap = 'break-word';
+        overlay.style.overflowWrap = 'break-word';
+      }
+    }, []);
+
     return (
       <div className="relative">
         {/* Overlay with highlighted text */}
@@ -156,17 +183,17 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
           ref={overlayRef}
           className={cn(
             "absolute inset-0 pointer-events-none overflow-hidden",
-            "px-3 py-2 text-sm",
-            "border border-transparent rounded-md",
+            "text-sm bg-transparent",
             "whitespace-pre-wrap break-words",
             className
           )}
           style={{
-            fontFamily: 'inherit',
-            fontSize: 'inherit',
-            lineHeight: 'inherit',
-            letterSpacing: 'inherit',
-            wordSpacing: 'inherit',
+            color: 'transparent',
+            caretColor: 'transparent',
+            resize: 'none',
+            outline: 'none',
+            border: 'none',
+            background: 'transparent',
           }}
         >
           {renderHighlightedText()}
@@ -188,6 +215,7 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             "px-3 py-2 text-sm",
             "border border-input rounded-md",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "whitespace-pre-wrap break-words",
             className
           )}
           style={{
@@ -196,6 +224,9 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             lineHeight: 'inherit',
             letterSpacing: 'inherit',
             wordSpacing: 'inherit',
+            color: 'transparent',
+            caretColor: 'black',
+            background: 'transparent',
           }}
         />
       </div>
