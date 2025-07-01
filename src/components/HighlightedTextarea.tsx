@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -185,12 +184,11 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
           ref={overlayRef}
           className={cn(
             "absolute inset-0 pointer-events-none overflow-hidden",
-            "text-sm bg-transparent w-full",
+            "text-sm bg-transparent w-full text-gray-900",
             "whitespace-pre-wrap break-words",
             className
           )}
           style={{
-            color: 'transparent',
             caretColor: 'transparent',
             resize: 'none',
             outline: 'none',
