@@ -4,6 +4,7 @@ import { ArrowLeft, Upload, Image, Save, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AutocompleteModal from './AutocompleteModal';
 import HighlightedTextarea from './HighlightedTextarea';
@@ -16,10 +17,17 @@ export default function AgentCreationForm() {
     delay: 0,
     summary: '',
     instructions: '',
-    image: null as File | null
+    image: null as File | null,
+    folderId: 'sem-pasta'
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+  // Mock folders data - in a real app this would come from props or context
+  const mockFolders = [
+    { id: 'pedro', name: 'Pedro' },
+    { id: 'exemplo', name: 'exemplo' }
+  ];
 
   const handleInstructionsInsert = (value: string, position: number) => {
     console.log('Inserting value:', value, 'at position:', position);
@@ -207,6 +215,26 @@ export default function AgentCreationForm() {
                       onChange={(e) => handleInputChange('delay', parseInt(e.target.value) || 0)}
                       placeholder="0"
                     />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="folder">Pasta do agente</Label>
+                    <Select 
+                      value={formData.folderId} 
+                      onValueChange={(value) => handleInputChange('folderId', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma pasta" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sem-pasta">Sem pasta</SelectItem>
+                        {mockFolders.map((folder) => (
+                          <SelectItem key={folder.id} value={folder.id}>
+                            {folder.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>

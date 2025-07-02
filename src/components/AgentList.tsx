@@ -8,7 +8,7 @@ import AgentTableHeader from './AgentTableHeader';
 import AgentFolderItem from './AgentFolderItem';
 import AgentSelectionFooter from './AgentSelectionFooter';
 import FolderCreationModal from './FolderCreationModal';
-import AgentCreationModal from './AgentCreationModal';
+
 import { useToast } from '@/hooks/use-toast';
 
 // Initial data with "Sem pasta" folder
@@ -92,7 +92,7 @@ export default function AgentList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('lastModified');
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  
   const { toast } = useToast();
 
   const toggleFolder = (folderId: string) => {
@@ -262,7 +262,6 @@ export default function AgentList() {
     <div className="flex-1 bg-gray-50">
       <AgentListHeader 
         onCreateFolder={() => setIsFolderModalOpen(true)}
-        onCreateAgent={() => setIsAgentModalOpen(true)}
       />
       
       <AgentSearchControls
@@ -308,12 +307,6 @@ export default function AgentList() {
         onCreateFolder={createFolder}
       />
 
-      <AgentCreationModal
-        isOpen={isAgentModalOpen}
-        onClose={() => setIsAgentModalOpen(false)}
-        onCreateAgent={createAgent}
-        folders={folders.filter(f => f.id !== 'sem-pasta')}
-      />
     </div>
   );
 }

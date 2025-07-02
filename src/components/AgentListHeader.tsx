@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 
 interface AgentListHeaderProps {
   onCreateFolder: () => void;
-  onCreateAgent: () => void;
 }
 
-export default function AgentListHeader({ onCreateFolder, onCreateAgent }: AgentListHeaderProps) {
+export default function AgentListHeader({ onCreateFolder }: AgentListHeaderProps) {
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -22,19 +21,12 @@ export default function AgentListHeader({ onCreateFolder, onCreateAgent }: Agent
             <FolderPlus className="w-4 h-4 mr-2" />
             Criar pasta
           </Button>
-          <Button
-            onClick={onCreateAgent}
-            className="inline-flex items-center"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Criar novo agente
-          </Button>
           <Link
             to="/criar-agente"
-            className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Agente avançado
+            Criar Agente
           </Link>
         </div>
       </div>
