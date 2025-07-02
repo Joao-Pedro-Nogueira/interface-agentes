@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { AgentFolder, Agent } from './types/agentTypes';
@@ -249,7 +248,7 @@ export default function AgentList() {
       agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agent.description.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  })).filter(folder => folder.agents.length > 0 || folder.id === 'sem-pasta');
+  }));
 
   // Ensure "Sem pasta" is always first
   const sortedFolders = filteredFolders.sort((a, b) => {
@@ -269,6 +268,7 @@ export default function AgentList() {
         setSearchTerm={setSearchTerm}
         sortBy={sortBy}
         setSortBy={setSortBy}
+        onCreateFolder={() => setIsFolderModalOpen(true)}
       />
 
       <div className="flex-1 overflow-auto">

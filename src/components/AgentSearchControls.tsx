@@ -1,4 +1,3 @@
-
 import { Search, Plus } from 'lucide-react';
 
 interface AgentSearchControlsProps {
@@ -6,13 +5,15 @@ interface AgentSearchControlsProps {
   setSearchTerm: (term: string) => void;
   sortBy: string;
   setSortBy: (sort: string) => void;
+  onCreateFolder: () => void;
 }
 
 export default function AgentSearchControls({
   searchTerm,
   setSearchTerm,
   sortBy,
-  setSortBy
+  setSortBy,
+  onCreateFolder
 }: AgentSearchControlsProps) {
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -29,7 +30,10 @@ export default function AgentSearchControls({
         </div>
         
         <div className="flex items-center space-x-4">
-          <button className="inline-flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+          <button 
+            onClick={onCreateFolder}
+            className="inline-flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Nova Pasta
           </button>
