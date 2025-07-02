@@ -7,6 +7,8 @@ import AgentTableHeader from './AgentTableHeader';
 import AgentFolderItem from './AgentFolderItem';
 import AgentSelectionFooter from './AgentSelectionFooter';
 import FolderCreationModal from './FolderCreationModal';
+import { useNavigate } from 'react-router-dom';
+import { useAgents } from '../contexts/AgentContext';
 
 import { useToast } from '@/hooks/use-toast';
 
@@ -86,7 +88,8 @@ const otherFolders: AgentFolder[] = [
 const mockAgents = [...initialFolders, ...otherFolders];
 
 export default function AgentList() {
-  const [folders, setFolders] = useState<AgentFolder[]>(mockAgents);
+  const navigate = useNavigate();
+  const { folders, setFolders, createFolder, deleteFolder } = useAgents();
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('lastModified');
@@ -110,66 +113,26 @@ export default function AgentList() {
     );
   };
 
-  const createFolder = (name: string) => {
-    // Check if folder name already exists
-    const existingFolder = folders.find(folder => 
-      folder.name.toLowerCase() === name.toLowerCase() && folder.id !== 'sem-pasta'
-    );
+  const handleCreateFolder = (name: string) => {
+    const success = createFolder(name);
     
-    if (existingFolder) {
+    if (success) {
+      toast({
+        title: "Pasta criada",
+        description: `A pasta "${name}" foi criada com sucesso.`
+      });
+    } else {
       toast({
         title: "Erro",
         description: "Já existe uma pasta com este nome.",
         variant: "destructive"
       });
-      return false;
     }
-
-    const newFolder: AgentFolder = {
-      id: `folder-${Date.now()}`,
-      name,
-      isExpanded: true,
-      agents: []
-    };
-
-    setFolders([...folders, newFolder]);
-    toast({
-      title: "Pasta criada",
-      description: `A pasta "${name}" foi criada com sucesso.`
-    });
-    return true;
+    
+    return success;
   };
 
-  const createAgent = (name: string, folderId?: string) => {
-    const newAgent: Agent = {
-      id: `agent-${Date.now()}`,
-      name,
-      description: '',
-      tools: [],
-      lastRun: '-',
-      lastModified: 'agora',
-      created: 'agora'
-    };
-
-    const targetFolderId = folderId || 'sem-pasta';
-    const newFolders = folders.map(folder => {
-      if (folder.id === targetFolderId) {
-        return {
-          ...folder,
-          agents: [...folder.agents, newAgent]
-        };
-      }
-      return folder;
-    });
-
-    setFolders(newFolders);
-    toast({
-      title: "Agente criado",
-      description: `O agente "${name}" foi criado com sucesso.`
-    });
-  };
-
-  const deleteFolder = (folderId: string) => {
+  const handleDeleteFolder = (folderId: string) => {
     if (folderId === 'sem-pasta') {
       toast({
         title: "Erro",
@@ -182,15 +145,7 @@ export default function AgentList() {
     const folderToDelete = folders.find(f => f.id === folderId);
     if (!folderToDelete) return;
 
-    // Move all agents from deleted folder to "Sem pasta"
-    const semPastaFolder = folders.find(f => f.id === 'sem-pasta');
-    if (semPastaFolder) {
-      semPastaFolder.agents = [...semPastaFolder.agents, ...folderToDelete.agents];
-    }
-
-    // Remove the folder
-    const newFolders = folders.filter(f => f.id !== folderId);
-    setFolders(newFolders);
+    deleteFolder(folderId);
 
     toast({
       title: "Pasta excluída",
@@ -257,6 +212,10 @@ export default function AgentList() {
     return a.name.localeCompare(b.name);
   });
 
+  const handleAgentClick = (agent: Agent) => {
+    navigate('/criar-agente', { state: { agent } });
+  };
+
   return (
     <div className="flex-1 bg-gray-50">
       <AgentListHeader 
@@ -291,7 +250,8 @@ export default function AgentList() {
                   selectedAgents={selectedAgents}
                   toggleFolder={toggleFolder}
                   toggleAgentSelection={toggleAgentSelection}
-                  onDeleteFolder={deleteFolder}
+                  onDeleteFolder={handleDeleteFolder}
+                  onAgentClick={handleAgentClick}
                 />
               ))
             )}
@@ -304,7 +264,7 @@ export default function AgentList() {
       <FolderCreationModal
         isOpen={isFolderModalOpen}
         onClose={() => setIsFolderModalOpen(false)}
-        onCreateFolder={createFolder}
+        onCreateFolder={handleCreateFolder}
       />
 
     </div>

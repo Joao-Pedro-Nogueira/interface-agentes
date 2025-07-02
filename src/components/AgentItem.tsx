@@ -1,4 +1,3 @@
-
 import { Draggable } from 'react-beautiful-dnd';
 import { Move } from 'lucide-react';
 import { Agent } from './types/agentTypes';
@@ -8,9 +7,10 @@ interface AgentItemProps {
   index: number;
   isSelected: boolean;
   onToggleSelection: () => void;
+  onClick?: () => void;
 }
 
-export default function AgentItem({ agent, index, isSelected, onToggleSelection }: AgentItemProps) {
+export default function AgentItem({ agent, index, isSelected, onToggleSelection, onClick }: AgentItemProps) {
   return (
     <Draggable draggableId={agent.id} index={index}>
       {(provided, snapshot) => (
@@ -20,6 +20,8 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection 
           className={`agent-item px-4 py-4 ${
             snapshot.isDragging ? 'bg-blue-50 shadow-lg border border-blue-200 rounded-lg' : ''
           }`}
+          onClick={onClick}
+          style={{ cursor: onClick ? 'pointer' : undefined }}
         >
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-1 flex items-center space-x-2">
@@ -34,6 +36,7 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection 
                 checked={isSelected}
                 onChange={onToggleSelection}
                 className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2"
+                onClick={e => e.stopPropagation()}
               />
             </div>
             

@@ -1,4 +1,3 @@
-
 import { ChevronDown, ChevronUp, Folder, Trash2, MoreHorizontal } from 'lucide-react';
 import { Droppable } from 'react-beautiful-dnd';
 import { Agent, AgentFolder } from './types/agentTypes';
@@ -29,6 +28,7 @@ interface AgentFolderItemProps {
   toggleFolder: (folderId: string) => void;
   toggleAgentSelection: (agentId: string) => void;
   onDeleteFolder: (folderId: string) => void;
+  onAgentClick?: (agent: Agent) => void;
 }
 
 export default function AgentFolderItem({
@@ -36,7 +36,8 @@ export default function AgentFolderItem({
   selectedAgents,
   toggleFolder,
   toggleAgentSelection,
-  onDeleteFolder
+  onDeleteFolder,
+  onAgentClick
 }: AgentFolderItemProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -137,6 +138,7 @@ export default function AgentFolderItem({
                   index={index}
                   isSelected={selectedAgents.includes(agent.id)}
                   onToggleSelection={() => toggleAgentSelection(agent.id)}
+                  onClick={onAgentClick ? () => onAgentClick(agent) : undefined}
                 />
               ))}
               {provided.placeholder}

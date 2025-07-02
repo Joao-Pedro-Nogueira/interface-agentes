@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Upload, Image, Save, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,16 +9,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AutocompleteModal from './AutocompleteModal';
 import HighlightedTextarea from './HighlightedTextarea';
 import { useAutocomplete } from '@/hooks/useAutocomplete';
+import { Agent } from './types/agentTypes';
+import { useAgents } from '../contexts/AgentContext';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AgentCreationForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { updateAgent } = useAgents();
+  const { toast } = useToast();
+  const agentToEdit = location.state?.agent as Agent | undefined;
+  
   const [formData, setFormData] = useState({
-    name: '',
+    id: agentToEdit?.id || '',
+    name: agentToEdit?.name || '',
     delay: 0,
     summary: '',
     instructions: '',
     image: null as File | null,
-    folderId: 'sem-pasta'
+    folderId: 'sem-pasta',
+    description: agentToEdit?.description || '',
+    tools: agentToEdit?.tools || [],
+    lastRun: agentToEdit?.lastRun || '-',
+    lastModified: agentToEdit?.lastModified || '-',
+    created: agentToEdit?.created || '-',
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -69,6 +83,15 @@ export default function AgentCreationForm() {
     }
   }, [autocomplete.isOpen, autocomplete.handleClickOutside]);
 
+  useEffect(() => {
+    if (agentToEdit) {
+      setFormData(prev => ({
+        ...prev,
+        ...agentToEdit
+      }));
+    }
+  }, [agentToEdit]);
+
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
@@ -98,8 +121,33 @@ export default function AgentCreationForm() {
   };
 
   const handleSave = () => {
-    console.log('Saving agent:', formData);
-    // Add save logic here
+    if (agentToEdit) {
+      // Update existing agent
+      const updatedAgent: Agent = {
+        id: formData.id,
+        name: formData.name,
+        description: formData.description,
+        tools: formData.tools,
+        lastRun: formData.lastRun,
+        lastModified: 'agora',
+        created: formData.created,
+      };
+      
+      updateAgent(updatedAgent);
+      
+      toast({
+        title: "Agente atualizado",
+        description: `O agente "${formData.name}" foi atualizado com sucesso.`
+      });
+    } else {
+      // Create new agent logic here if needed
+      toast({
+        title: "Agente criado",
+        description: `O agente "${formData.name}" foi criado com sucesso.`
+      });
+    }
+    
+    navigate('/');
   };
 
   const handleTest = () => {
@@ -132,10 +180,10 @@ export default function AgentCreationForm() {
               </div>
               <div>
                 <h1 className="text-xl font-semibold">
-                  {formData.name || 'Novo Agente'}
+                  {agentToEdit ? 'Editar Agente' : 'Novo Agente'}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {formData.summary || 'Configurar agente'}
+                  {agentToEdit ? `Editando: ${formData.name}` : 'Configurar agente'}
                 </p>
               </div>
             </div>
