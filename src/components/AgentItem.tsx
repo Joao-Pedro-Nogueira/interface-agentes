@@ -17,19 +17,28 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          className={`agent-item px-4 py-4 ${
-            snapshot.isDragging ? 'bg-blue-50 shadow-lg border border-blue-200 rounded-lg' : ''
+          className={`agent-item px-4 py-4 transition-all duration-150 ${
+            snapshot.isDragging 
+              ? 'bg-blue-50 shadow-lg border border-blue-200 rounded' 
+              : 'hover:bg-gray-50 border-b border-gray-100'
           }`}
           onClick={onClick}
-          style={{ cursor: onClick ? 'pointer' : undefined }}
+          style={{ 
+            cursor: onClick ? 'pointer' : undefined,
+            ...provided.draggableProps.style
+          }}
         >
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-1 flex items-center space-x-2">
               <div
                 {...provided.dragHandleProps}
-                className="cursor-move p-1 hover:bg-gray-100 rounded"
+                className={`cursor-move p-1 rounded transition-colors duration-150 ${
+                  snapshot.isDragging 
+                    ? 'bg-blue-100 text-blue-600' 
+                    : 'hover:bg-gray-100 text-gray-400 hover:text-gray-600'
+                }`}
               >
-                <Move className="w-4 h-4 text-gray-400" />
+                <Move className="w-4 h-4" />
               </div>
               <input
                 type="checkbox"
@@ -41,32 +50,46 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
             </div>
             
             <div className="col-span-3">
-              <span className="font-medium text-gray-900">{agent.name}</span>
+              <span className="font-medium text-gray-900">
+                {agent.name}
+              </span>
             </div>
             
             <div className="col-span-3">
-              <span className="text-gray-600">{agent.description || '-'}</span>
+              <span className="text-gray-600">
+                {agent.description || '-'}
+              </span>
             </div>
             
             <div className="col-span-1">
               <div className="flex space-x-1">
                 {agent.tools.map((tool, toolIndex) => (
-                  <span key={toolIndex} className="text-sm">{tool}</span>
+                  <span key={toolIndex} className="text-sm">
+                    {tool}
+                  </span>
                 ))}
-                {agent.tools.length === 0 && <span className="text-gray-400">-</span>}
+                {agent.tools.length === 0 && (
+                  <span className="text-gray-400">-</span>
+                )}
               </div>
             </div>
             
             <div className="col-span-1">
-              <span className="text-gray-600">{agent.lastRun}</span>
+              <span className="text-gray-600">
+                {agent.lastRun}
+              </span>
             </div>
             
             <div className="col-span-2">
-              <span className="text-gray-600">{agent.lastModified}</span>
+              <span className="text-gray-600">
+                {agent.lastModified}
+              </span>
             </div>
             
             <div className="col-span-1">
-              <span className="text-gray-600">{agent.created}</span>
+              <span className="text-gray-600">
+                {agent.created}
+              </span>
             </div>
           </div>
         </div>

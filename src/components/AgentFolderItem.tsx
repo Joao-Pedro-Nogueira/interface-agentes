@@ -127,8 +127,10 @@ export default function AgentFolderItem({
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className={`min-h-[4px] ${
-                snapshot.isDraggingOver ? 'bg-blue-50 border-l-4 border-blue-400' : ''
+              className={`min-h-[4px] transition-colors duration-150 ${
+                snapshot.isDraggingOver 
+                  ? 'bg-blue-50 border-l-2 border-blue-400' 
+                  : ''
               }`}
             >
               {folder.agents.map((agent, index) => (

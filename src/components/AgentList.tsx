@@ -94,6 +94,7 @@ export default function AgentList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('lastModified');
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   
   const { toast } = useToast();
 
@@ -153,7 +154,12 @@ export default function AgentList() {
     });
   };
 
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
   const handleDragEnd = (result: DropResult) => {
+    setIsDragging(false);
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -191,9 +197,16 @@ export default function AgentList() {
 
     setFolders(newFolders);
     
+    // Enhanced success feedback
+    const isSameFolder = sourceFolderId === destinationFolderId;
+    const message = isSameFolder 
+      ? `Agente "${draggedAgent.name}" reordenado na pasta "${destinationFolder.name}"`
+      : `Agente "${draggedAgent.name}" movido para "${destinationFolder.name}"`;
+    
     toast({
       title: "Agente movido",
-      description: `Agente movido para "${destinationFolder.name}".`
+      description: message,
+      duration: 3000,
     });
   };
 
@@ -233,7 +246,7 @@ export default function AgentList() {
       <div className="flex-1 overflow-auto">
         <AgentTableHeader />
 
-        <DragDropContext onDragEnd={handleDragEnd}>
+        <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <div className="bg-white">
             {sortedFolders.length === 0 ? (
               <div className="text-center py-12">
