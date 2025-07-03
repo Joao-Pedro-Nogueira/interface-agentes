@@ -17,7 +17,7 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          className={`agent-item px-4 py-4 transition-all duration-150 ${
+          className={`agent-item px-4 h-16 flex items-center transition-all duration-150 ${
             snapshot.isDragging 
               ? 'bg-blue-50 shadow-lg border border-blue-200 rounded' 
               : 'hover:bg-gray-50 border-b border-gray-100'
@@ -28,7 +28,7 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
             ...provided.draggableProps.style
           }}
         >
-          <div className="grid grid-cols-12 gap-4 items-center">
+          <div className="grid grid-cols-12 gap-4 items-center w-full">
             <div className="col-span-1 flex items-center space-x-2">
               <div
                 {...provided.dragHandleProps}

@@ -55,7 +55,7 @@ export default function AgentFolderItem({
     <div>
       {/* Folder Header */}
       <div 
-        className="folder-header px-4 py-3 bg-gray-50 border-b border-gray-100 cursor-pointer group"
+        className="folder-header px-4 h-12 flex items-center bg-gray-50 border-b border-gray-100 cursor-pointer group"
       >
         <div className="flex items-center justify-between">
           <div 
