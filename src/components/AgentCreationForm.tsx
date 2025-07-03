@@ -20,7 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function AgentCreationForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { updateAgent, saveAgentVersion, restoreAgentVersion } = useAgents();
+  const { updateAgent, saveAgentVersion, restoreAgentVersion, updateVersionName, updateVersionObservations, folders } = useAgents();
   const { toast } = useToast();
   const agentToEdit = location.state?.agent as Agent | undefined;
   
@@ -45,6 +45,7 @@ export default function AgentCreationForm() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedVersion, setSelectedVersion] = useState<AgentVersion | null>(null);
+  const [currentAgent, setCurrentAgent] = useState<Agent | undefined>(agentToEdit);
   
   // Mock folders data - in a real app this would come from props or context
   const mockFolders = [
@@ -112,6 +113,19 @@ export default function AgentCreationForm() {
       }));
     }
   }, [agentToEdit]);
+
+  // Sync currentAgent with context changes
+  useEffect(() => {
+    if (agentToEdit) {
+      const updatedAgent = folders
+        .flatMap(folder => folder.agents)
+        .find(agent => agent.id === agentToEdit.id);
+      
+      if (updatedAgent) {
+        setCurrentAgent(updatedAgent);
+      }
+    }
+  }, [folders, agentToEdit]);
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
@@ -188,11 +202,11 @@ export default function AgentCreationForm() {
   };
 
   const handleRestoreVersion = (versionId: string) => {
-    if (agentToEdit) {
-      restoreAgentVersion(agentToEdit.id, versionId);
+    if (currentAgent) {
+      restoreAgentVersion(currentAgent.id, versionId);
       
       // Update form data with restored version
-      const versionToRestore = agentToEdit.versions?.find(v => v.id === versionId);
+      const versionToRestore = currentAgent.versions?.find(v => v.id === versionId);
       if (versionToRestore) {
         setFormData(prev => ({
           ...prev,
@@ -224,6 +238,26 @@ export default function AgentCreationForm() {
 
   const handleCloseVersionView = () => {
     setSelectedVersion(null);
+  };
+
+  const handleUpdateVersionName = (versionId: string, newName: string) => {
+    if (currentAgent) {
+      updateVersionName(currentAgent.id, versionId, newName);
+      toast({
+        title: "Nome da versão atualizado",
+        description: `A versão foi renomeada para "${newName}".`
+      });
+    }
+  };
+
+  const handleUpdateVersionObservations = (versionId: string, observations: string) => {
+    if (currentAgent) {
+      updateVersionObservations(currentAgent.id, versionId, observations);
+      toast({
+        title: "Observações atualizadas",
+        description: "As observações da versão foram atualizadas com sucesso."
+      });
+    }
   };
 
   return (
@@ -587,9 +621,11 @@ export default function AgentCreationForm() {
                 <h2 className="text-lg font-semibold mb-4">Histórico de Versões</h2>
                 
                 <AgentVersionHistory
-                  versions={agentToEdit?.versions || []}
+                  versions={currentAgent?.versions || []}
                   onViewVersion={handleViewVersion}
                   onRestoreVersion={handleRestoreVersion}
+                  onUpdateVersionName={handleUpdateVersionName}
+                  onUpdateVersionObservations={handleUpdateVersionObservations}
                 />
               </div>
             </TabsContent>

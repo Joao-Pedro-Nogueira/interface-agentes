@@ -1,21 +1,84 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RotateCcw, Eye, Clock, Tag } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { RotateCcw, Eye, Clock, Tag, Check, X, MessageSquare } from 'lucide-react';
 import { AgentVersion } from './types/agentTypes';
 
 interface AgentVersionHistoryProps {
   versions: AgentVersion[];
   onViewVersion: (version: AgentVersion) => void;
   onRestoreVersion: (versionId: string) => void;
+  onUpdateVersionName: (versionId: string, newName: string) => void;
+  onUpdateVersionObservations: (versionId: string, observations: string) => void;
 }
 
 export default function AgentVersionHistory({ 
   versions, 
   onViewVersion, 
-  onRestoreVersion 
+  onRestoreVersion,
+  onUpdateVersionName,
+  onUpdateVersionObservations
 }: AgentVersionHistoryProps) {
+  const [editingVersionId, setEditingVersionId] = useState<string | null>(null);
+  const [editingObservations, setEditingObservations] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingVersionId && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editingVersionId]);
+
+  const handleDoubleClick = (version: AgentVersion) => {
+    setEditingVersionId(version.id);
+    setEditingObservations(version.observations || '');
+  };
+
+  const handleSave = () => {
+    if (editingVersionId) {
+      onUpdateVersionObservations(editingVersionId, editingObservations.trim());
+      setEditingVersionId(null);
+      setEditingObservations('');
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingVersionId(null);
+    setEditingObservations('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSave();
+    } else if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
+
+  // Reset editing state when versions change (in case of external updates)
+  useEffect(() => {
+    if (editingVersionId) {
+      const currentVersion = versions.find(v => v.id === editingVersionId);
+      if (currentVersion) {
+        setEditingObservations(currentVersion.observations || '');
+      }
+    }
+  }, [versions, editingVersionId]);
+
+  // Exit editing mode when versions are updated externally
+  useEffect(() => {
+    if (editingVersionId) {
+      const currentVersion = versions.find(v => v.id === editingVersionId);
+      if (!currentVersion) {
+        setEditingVersionId(null);
+        setEditingObservations('');
+      }
+    }
+  }, [versions, editingVersionId]);
+
   if (!versions || versions.length === 0) {
     return (
       <div className="text-center py-8">
@@ -38,7 +101,7 @@ export default function AgentVersionHistory({
       </div>
       
       {versions.slice().reverse().map((version) => (
-        <Card key={version.id} className="border border-gray-200 hover:border-gray-300 transition-colors">
+        <Card key={`${version.id}-${version.version}`} className="border border-gray-200 hover:border-gray-300 transition-colors">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -72,7 +135,51 @@ export default function AgentVersionHistory({
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-sm text-gray-600">{version.changes}</p>
+            <p className="text-sm text-gray-600 mb-3">{version.changes}</p>
+            
+            {/* Observations Section */}
+            <div className="border-t border-gray-100 pt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700">Observações</span>
+              </div>
+              
+              {editingVersionId === version.id ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    ref={inputRef}
+                    value={editingObservations}
+                    onChange={(e) => setEditingObservations(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="flex-1 text-sm"
+                    placeholder="Adicione observações sobre esta versão..."
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleSave}
+                    className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700"
+                  >
+                    <Check className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleCancel}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div 
+                  className="text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition-colors select-none min-h-[20px]"
+                  onDoubleClick={() => handleDoubleClick(version)}
+                  title="Duplo clique para editar observações"
+                >
+                  {version.observations || 'Clique duas vezes para adicionar observações...'}
+                </div>
+              )}
+            </div>
             
             {/* Quick info about the version */}
             <div className="mt-3 pt-3 border-t border-gray-100">

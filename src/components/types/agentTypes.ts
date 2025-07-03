@@ -3,6 +3,7 @@ export interface AgentVersion {
   version: string;
   timestamp: string;
   changes: string;
+  observations?: string;
   agentData: Omit<Agent, 'versions'>;
 }
 

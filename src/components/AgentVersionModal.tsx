@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { X, Calendar, Tag, Settings, FileText, Mic, Star } from 'lucide-react';
+import { X, Calendar, Tag, Settings, FileText, Mic, Star, MessageSquare } from 'lucide-react';
 import { AgentVersion } from './types/agentTypes';
 
 interface AgentVersionModalProps {
@@ -41,6 +41,15 @@ export default function AgentVersionModal({ version, onClose }: AgentVersionModa
             </Button>
           </div>
           <p className="text-sm text-gray-600 mt-2">{version.changes}</p>
+          {version.observations && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Observações</span>
+              </div>
+              <p className="text-sm text-blue-700">{version.observations}</p>
+            </div>
+          )}
         </div>
 
         {/* Content */}

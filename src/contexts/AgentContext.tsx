@@ -11,6 +11,8 @@ interface AgentContextType {
   deleteFolder: (folderId: string) => void;
   saveAgentVersion: (agentId: string, changes: string) => void;
   restoreAgentVersion: (agentId: string, versionId: string) => void;
+  updateVersionName: (agentId: string, versionId: string, newName: string) => void;
+  updateVersionObservations: (agentId: string, versionId: string, observations: string) => void;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
@@ -42,6 +44,7 @@ const initialFolders: AgentFolder[] = [
             version: '1.0.0',
             timestamp: '16 minutos atrás',
             changes: 'Versão inicial do agente',
+            observations: '',
             agentData: {
               id: '1',
               name: 'Agente sem título',
@@ -90,6 +93,7 @@ const otherFolders: AgentFolder[] = [
             version: '1.0.0',
             timestamp: 'mês passado',
             changes: 'Versão inicial do agente',
+            observations: '',
             agentData: {
               id: '2',
               name: 'pedro',
@@ -135,6 +139,7 @@ const otherFolders: AgentFolder[] = [
             version: '1.0.0',
             timestamp: 'mês passado',
             changes: 'Versão inicial do agente',
+            observations: '',
             agentData: {
               id: '3',
               name: 'SEO Optimized Blog Writer',
@@ -173,6 +178,7 @@ const otherFolders: AgentFolder[] = [
             version: '1.0.0',
             timestamp: 'mês passado',
             changes: 'Versão inicial do agente',
+            observations: '',
             agentData: {
               id: '4',
               name: 'SEO Optimized Blog Writer',
@@ -211,6 +217,7 @@ const otherFolders: AgentFolder[] = [
             version: '1.0.0',
             timestamp: '5 meses atrás',
             changes: 'Versão inicial do agente',
+            observations: '',
             agentData: {
               id: '5',
               name: 'Agente sem título',
@@ -374,6 +381,46 @@ export function AgentProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const updateVersionName = (agentId: string, versionId: string, newName: string) => {
+    setFolders(prevFolders => 
+      prevFolders.map(folder => ({
+        ...folder,
+        agents: folder.agents.map(agent => {
+          if (agent.id === agentId) {
+            const updatedVersions = agent.versions?.map(version =>
+              version.id === versionId ? { ...version, version: newName } : version
+            );
+            return {
+              ...agent,
+              versions: updatedVersions
+            };
+          }
+          return agent;
+        })
+      }))
+    );
+  };
+
+  const updateVersionObservations = (agentId: string, versionId: string, observations: string) => {
+    setFolders(prevFolders => 
+      prevFolders.map(folder => ({
+        ...folder,
+        agents: folder.agents.map(agent => {
+          if (agent.id === agentId) {
+            const updatedVersions = agent.versions?.map(version =>
+              version.id === versionId ? { ...version, observations } : version
+            );
+            return {
+              ...agent,
+              versions: updatedVersions
+            };
+          }
+          return agent;
+        })
+      }))
+    );
+  };
+
   return (
     <AgentContext.Provider value={{
       folders,
@@ -384,7 +431,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       createFolder,
       deleteFolder,
       saveAgentVersion,
-      restoreAgentVersion
+      restoreAgentVersion,
+      updateVersionName,
+      updateVersionObservations
     }}>
       {children}
     </AgentContext.Provider>
