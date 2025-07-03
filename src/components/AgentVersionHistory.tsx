@@ -220,7 +220,7 @@ export default function AgentVersionHistory({
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-sm text-gray-600 mb-3">{version.changes}</p>
+            {/* <p className="text-sm text-gray-600 mb-3">{version.changes}</p> */}
             
             {/* Observations Section */}
             <div className="border-t border-gray-100 pt-3">

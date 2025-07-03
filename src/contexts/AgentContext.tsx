@@ -89,7 +89,7 @@ const otherFolders: AgentFolder[] = [
         keywords: 'vendas, prospecção, B2B, fechamento, CRM',
         signature: true,
         audioAccessibility: true,
-        primaryAgent: true,
+        primaryAgent: false,
         isActive: true,
         versions: [
           {
@@ -111,7 +111,7 @@ const otherFolders: AgentFolder[] = [
               keywords: 'vendas, prospecção, B2B, fechamento, CRM',
               signature: true,
               audioAccessibility: true,
-              primaryAgent: true,
+              primaryAgent: false,
               isActive: true,
             }
           }
@@ -220,7 +220,7 @@ const otherFolders: AgentFolder[] = [
         signature: false,
         audioAccessibility: false,
         primaryAgent: false,
-        isActive: true,
+        isActive: false,
         versions: [
           {
             id: 'v5-1',
@@ -242,7 +242,7 @@ const otherFolders: AgentFolder[] = [
               signature: false,
               audioAccessibility: false,
               primaryAgent: false,
-              isActive: true,
+              isActive: false,
             }
           }
         ]
@@ -267,7 +267,7 @@ const otherFolders: AgentFolder[] = [
         keywords: 'suporte, técnico, dúvidas, ajuda, FAQ',
         signature: false,
         audioAccessibility: true,
-        primaryAgent: false,
+        primaryAgent: true,
         isActive: true,
         versions: [
           {
@@ -289,7 +289,7 @@ const otherFolders: AgentFolder[] = [
               keywords: 'suporte, técnico, dúvidas, ajuda, FAQ',
               signature: false,
               audioAccessibility: true,
-              primaryAgent: false,
+              primaryAgent: true,
               isActive: true,
             }
           }
@@ -309,7 +309,7 @@ const otherFolders: AgentFolder[] = [
         signature: true,
         audioAccessibility: true,
         primaryAgent: false,
-        isActive: true,
+        isActive: false,
         versions: [
           {
             id: 'v7-1',
@@ -331,7 +331,7 @@ const otherFolders: AgentFolder[] = [
               signature: true,
               audioAccessibility: true,
               primaryAgent: false,
-              isActive: true,
+              isActive: false,
             }
           }
         ]
