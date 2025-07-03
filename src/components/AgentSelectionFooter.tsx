@@ -1,9 +1,10 @@
 
 interface AgentSelectionFooterProps {
   selectedCount: number;
+  onDeleteSelected: () => void;
 }
 
-export default function AgentSelectionFooter({ selectedCount }: AgentSelectionFooterProps) {
+export default function AgentSelectionFooter({ selectedCount, onDeleteSelected }: AgentSelectionFooterProps) {
   if (selectedCount === 0) return null;
 
   return (
@@ -16,7 +17,10 @@ export default function AgentSelectionFooter({ selectedCount }: AgentSelectionFo
           <button className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors">
             Mover para pasta
           </button>
-          <button className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors">
+          <button 
+            onClick={onDeleteSelected}
+            className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
+          >
             Excluir
           </button>
         </div>

@@ -39,6 +39,7 @@ const initialFolders: AgentFolder[] = [
         signature: false,
         audioAccessibility: true,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v1-1',
@@ -60,6 +61,7 @@ const initialFolders: AgentFolder[] = [
               signature: false,
               audioAccessibility: true,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -88,6 +90,7 @@ const otherFolders: AgentFolder[] = [
         signature: true,
         audioAccessibility: true,
         primaryAgent: true,
+        isActive: true,
         versions: [
           {
             id: 'v2-1',
@@ -109,6 +112,7 @@ const otherFolders: AgentFolder[] = [
               signature: true,
               audioAccessibility: true,
               primaryAgent: true,
+              isActive: true,
             }
           }
         ]
@@ -127,6 +131,7 @@ const otherFolders: AgentFolder[] = [
         signature: false,
         audioAccessibility: true,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v3-1',
@@ -148,6 +153,7 @@ const otherFolders: AgentFolder[] = [
               signature: false,
               audioAccessibility: true,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -173,6 +179,7 @@ const otherFolders: AgentFolder[] = [
         signature: true,
         audioAccessibility: false,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v4-1',
@@ -194,6 +201,7 @@ const otherFolders: AgentFolder[] = [
               signature: true,
               audioAccessibility: false,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -212,6 +220,7 @@ const otherFolders: AgentFolder[] = [
         signature: false,
         audioAccessibility: false,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v5-1',
@@ -233,6 +242,7 @@ const otherFolders: AgentFolder[] = [
               signature: false,
               audioAccessibility: false,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -258,6 +268,7 @@ const otherFolders: AgentFolder[] = [
         signature: false,
         audioAccessibility: true,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v6-1',
@@ -279,6 +290,7 @@ const otherFolders: AgentFolder[] = [
               signature: false,
               audioAccessibility: true,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -297,6 +309,7 @@ const otherFolders: AgentFolder[] = [
         signature: true,
         audioAccessibility: true,
         primaryAgent: false,
+        isActive: true,
         versions: [
           {
             id: 'v7-1',
@@ -318,6 +331,7 @@ const otherFolders: AgentFolder[] = [
               signature: true,
               audioAccessibility: true,
               primaryAgent: false,
+              isActive: true,
             }
           }
         ]
@@ -432,6 +446,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
                 signature: agent.signature,
                 audioAccessibility: agent.audioAccessibility,
                 primaryAgent: agent.primaryAgent,
+                isActive: true,
               }
             };
 
@@ -457,7 +472,8 @@ export function AgentProvider({ children }: { children: ReactNode }) {
               return {
                 ...agent,
                 ...versionToRestore.agentData,
-                lastModified: 'agora'
+                lastModified: 'agora',
+                isActive: true
               };
             }
           }

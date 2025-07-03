@@ -45,8 +45,11 @@ export default function AgentSearchControls({
               onChange={(e) => setSortBy(e.target.value)}
               className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             >
-              <option value="lastModified">Última modificação</option>
-              <option value="name">Nome</option>
+              <option value="folders-asc">Pastas (A-Z)</option>
+              <option value="folders-desc">Pastas (Z-A)</option>
+              <option value="name-asc">Nome (A-Z)</option>
+              <option value="name-desc">Nome (Z-A)</option>
+              <option value="lastModified">Última edição</option>
               <option value="created">Data de criação</option>
             </select>
           </div>

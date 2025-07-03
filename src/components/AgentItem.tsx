@@ -49,13 +49,13 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
               />
             </div>
             
-            <div className="col-span-4">
+            <div className="col-span-3">
               <span className="font-medium text-gray-900">
                 {agent.name}
               </span>
             </div>
             
-            <div className="col-span-4">
+            <div className="col-span-5">
               <span className="text-gray-600 text-sm">
                 {agent.summary || '-'}
               </span>
@@ -68,11 +68,23 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
             </div>
             
             <div className="col-span-1">
-              {agent.primaryAgent && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Primário
+              <div className="flex flex-col gap-1">
+                {/* Status de Ativação */}
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium justify-center  ${
+                  agent.isActive 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {agent.isActive ? 'Ativado' : 'Desativado'}
                 </span>
-              )}
+                
+                {/* Agente Primário */}
+                {agent.primaryAgent && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 justify-center">
+                    Primário
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

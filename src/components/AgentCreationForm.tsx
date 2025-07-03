@@ -24,23 +24,23 @@ export default function AgentCreationForm() {
   const { toast } = useToast();
   const agentIdFromState = location.state?.agent?.id as string | undefined;
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     id: '',
     name: '',
+    description: '',
+    tools: [],
+    lastRun: '-',
+    lastModified: '-',
+    created: '-',
     delay: 0,
     summary: '',
     keywords: '',
     signature: false,
     audioAccessibility: false,
     primaryAgent: false,
+    isActive: false,
     instructions: '',
-    image: null as File | null,
-    folderId: 'sem-pasta',
-    description: '',
-    tools: [],
-    lastRun: '-',
-    lastModified: '-',
-    created: '-',
+    versions: [],
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -117,6 +117,8 @@ export default function AgentCreationForm() {
           lastRun: agent.lastRun || '-',
           lastModified: agent.lastModified || '-',
           created: agent.created || '-',
+          isActive: agent.isActive || false,
+          instructions: agent.instructions || '',
         }));
       }
     }
@@ -167,7 +169,9 @@ export default function AgentCreationForm() {
         signature: formData.signature,
         audioAccessibility: formData.audioAccessibility,
         primaryAgent: formData.primaryAgent,
-        versions: currentAgent.versions
+        isActive: formData.isActive,
+        versions: currentAgent.versions,
+        instructions: formData.instructions || '',
       };
       
       updateAgent(updatedAgent);
@@ -182,6 +186,27 @@ export default function AgentCreationForm() {
       });
     } else {
       // Create new agent logic here if needed
+      const newAgent: Agent = {
+        id: formData.id,
+        name: formData.name,
+        description: formData.description,
+        tools: formData.tools,
+        lastRun: formData.lastRun,
+        lastModified: 'agora',
+        created: formData.created,
+        delay: formData.delay,
+        summary: formData.summary,
+        keywords: formData.keywords,
+        signature: formData.signature,
+        audioAccessibility: formData.audioAccessibility,
+        primaryAgent: formData.primaryAgent,
+        isActive: formData.isActive,
+        versions: [],
+        instructions: formData.instructions || '',
+      };
+      
+      updateAgent(newAgent);
+      
       toast({
         title: "Agente criado",
         description: `O agente "${formData.name}" foi criado com sucesso.`
@@ -217,6 +242,7 @@ export default function AgentCreationForm() {
           lastRun: versionToRestore.agentData.lastRun,
           lastModified: 'agora',
           created: versionToRestore.agentData.created,
+          instructions: versionToRestore.agentData.instructions || '',
         }));
       }
       
@@ -325,7 +351,17 @@ export default function AgentCreationForm() {
             {/* Geral Tab */}
             <TabsContent value="geral" className="space-y-6">
               <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-lg font-semibold mb-4">Configurações Gerais</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Configurações Gerais</h2>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="isActive"
+                      checked={formData.isActive}
+                      onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                    />
+                    <span className={`text-sm font-medium ${formData.isActive ? 'text-green-600' : 'text-gray-400'}`}>{formData.isActive ? 'Ativado' : 'Desativado'}</span>
+                  </div>
+                </div>
                 
                 {/* Image Upload and Basic Info Row */}
                 <div className="flex gap-6 mb-6">
@@ -529,16 +565,16 @@ export default function AgentCreationForm() {
                   <div className="mt-3 space-y-2">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-500">
-                        {formData.instructions.length} / 5000 caracteres
+                        {(formData.instructions || '').length} / 5000 caracteres
                       </span>
                       <span className={`font-medium ${
-                        formData.instructions.length > 4500 
+                        (formData.instructions || '').length > 4500 
                           ? 'text-red-600' 
-                          : formData.instructions.length > 4000 
+                          : (formData.instructions || '').length > 4000 
                             ? 'text-yellow-600' 
                             : 'text-gray-600'
                       }`}>
-                        {Math.round((formData.instructions.length / 5000) * 100)}%
+                        {Math.round(((formData.instructions || '').length / 5000) * 100)}%
                       </span>
                     </div>
                     
@@ -546,14 +582,14 @@ export default function AgentCreationForm() {
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full transition-all duration-300 ${
-                          formData.instructions.length > 4500 
+                          (formData.instructions || '').length > 4500 
                             ? 'bg-red-500' 
-                            : formData.instructions.length > 4000 
+                            : (formData.instructions || '').length > 4000 
                               ? 'bg-yellow-500' 
                               : 'bg-blue-500'
                         }`}
                         style={{ 
-                          width: `${Math.min((formData.instructions.length / 5000) * 100, 100)}%` 
+                          width: `${Math.min(((formData.instructions || '').length / 5000) * 100, 100)}%` 
                         }}
                       />
                     </div>

@@ -3,12 +3,22 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { AgentFolder, Agent } from './types/agentTypes';
 import AgentListHeader from './AgentListHeader';
 import AgentSearchControls from './AgentSearchControls';
+import AgentActionBar from './AgentActionBar';
 import AgentTableHeader from './AgentTableHeader';
 import AgentFolderItem from './AgentFolderItem';
-import AgentSelectionFooter from './AgentSelectionFooter';
 import FolderCreationModal from './FolderCreationModal';
 import { useNavigate } from 'react-router-dom';
 import { useAgents } from '../contexts/AgentContext';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 import { useToast } from '@/hooks/use-toast';
 
@@ -32,7 +42,8 @@ const initialFolders: AgentFolder[] = [
         keywords: 'assistente, geral, tarefas, automação, produtividade',
         signature: false,
         audioAccessibility: true,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       }
     ]
   }
@@ -57,7 +68,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'vendas, prospecção, B2B, fechamento, CRM',
         signature: true,
         audioAccessibility: true,
-        primaryAgent: true
+        primaryAgent: true,
+        isActive: true
       },
       {
         id: '3',
@@ -72,7 +84,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'marketing, digital, campanhas, analytics, redes sociais',
         signature: false,
         audioAccessibility: true,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       }
     ]
   },
@@ -94,7 +107,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'contratos, jurídico, análise, documentos, compliance',
         signature: true,
         audioAccessibility: false,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       },
       {
         id: '5',
@@ -109,7 +123,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'relatórios, dashboards, análise, dados, executivo',
         signature: false,
         audioAccessibility: false,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       }
     ]
   },
@@ -131,7 +146,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'suporte, técnico, dúvidas, ajuda, FAQ',
         signature: false,
         audioAccessibility: true,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       },
       {
         id: '7',
@@ -146,7 +162,8 @@ const otherFolders: AgentFolder[] = [
         keywords: 'SAC, atendimento, cliente, problemas, satisfação',
         signature: true,
         audioAccessibility: true,
-        primaryAgent: false
+        primaryAgent: false,
+        isActive: true
       }
     ]
   }
@@ -159,13 +176,19 @@ export default function AgentList() {
   const { folders, setFolders, createFolder, deleteFolder } = useAgents();
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('lastModified');
+  const [sortBy, setSortBy] = useState('folders-asc');
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   
   const { toast } = useToast();
 
   const toggleFolder = (folderId: string) => {
+    // If sorting by name or date, don't allow folder toggling
+    if (sortBy.startsWith('name-') || sortBy === 'lastModified' || sortBy === 'created') {
+      return;
+    }
+    
     setFolders(folders.map(folder => 
       folder.id === folderId 
         ? { ...folder, isExpanded: !folder.isExpanded }
@@ -240,6 +263,17 @@ export default function AgentList() {
       return;
     }
 
+    // If sorting by name or date, disable drag and drop
+    if (sortBy.startsWith('name-') || sortBy === 'lastModified' || sortBy === 'created') {
+      toast({
+        title: "Ação não permitida",
+        description: "Arrastar e soltar não está disponível na visualização unificada.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
     const sourceFolderId = source.droppableId;
     const destinationFolderId = destination.droppableId;
 
@@ -285,15 +319,115 @@ export default function AgentList() {
     )
   }));
 
-  // Ensure "Sem pasta" is always first
-  const sortedFolders = filteredFolders.sort((a, b) => {
-    if (a.id === 'sem-pasta') return -1;
-    if (b.id === 'sem-pasta') return 1;
-    return a.name.localeCompare(b.name);
-  });
+  // Sort agents within each folder based on sortBy
+  const sortedFolders = filteredFolders.map(folder => ({
+    ...folder,
+    agents: [...folder.agents].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+        case 'name-desc':
+          const nameComparison = a.name.localeCompare(b.name);
+          return sortBy === 'name-asc' ? nameComparison : -nameComparison;
+        case 'lastModified':
+          return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
+        case 'created':
+          return new Date(b.created).getTime() - new Date(a.created).getTime();
+        default:
+          return 0;
+      }
+    })
+  }));
+
+  // Sort folders and handle different view modes
+  let displayFolders = sortedFolders;
+  
+  if (sortBy.startsWith('name-') || sortBy === 'lastModified' || sortBy === 'created') {
+    // Flatten all agents and sort by the selected criteria, ignoring folders
+    const allAgents = sortedFolders.flatMap(folder => 
+      folder.agents.map(agent => ({ ...agent, folderName: folder.name }))
+    ).sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        case 'lastModified':
+          return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
+        case 'created':
+          return new Date(b.created).getTime() - new Date(a.created).getTime();
+        default:
+          return 0;
+      }
+    });
+    
+    // Create a single "Todos os Agentes" folder for unified sorting
+    displayFolders = [{
+      id: 'all-agents',
+      name: 'Todos os Agentes',
+      isExpanded: true,
+      agents: allAgents.map(agent => ({
+        ...agent,
+        name: `${agent.name} - ${agent.folderName}`
+      }))
+    }];
+  } else {
+    // Normal folder view - sort folders based on sortBy
+    displayFolders = sortedFolders.sort((a, b) => {
+      // Always keep "Sem pasta" first
+      if (a.id === 'sem-pasta') return -1;
+      if (b.id === 'sem-pasta') return 1;
+      
+      // Sort other folders based on sortBy
+      if (sortBy.startsWith('folders-')) {
+        const folderComparison = a.name.localeCompare(b.name);
+        return sortBy === 'folders-asc' ? folderComparison : -folderComparison;
+      }
+      
+      // Default: alphabetical ascending
+      return a.name.localeCompare(b.name);
+    });
+  }
 
   const handleAgentClick = (agent: Agent) => {
     navigate('/criar-agente', { state: { agent } });
+  };
+
+  const handleDeleteSelectedAgents = () => {
+    if (selectedAgents.length === 0) return;
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteAgents = () => {
+    // Get agent names for confirmation message
+    const agentNames = folders
+      .flatMap(folder => folder.agents)
+      .filter(agent => selectedAgents.includes(agent.id))
+      .map(agent => agent.name);
+
+    // Remove agents from all folders
+    const newFolders = folders.map(folder => ({
+      ...folder,
+      agents: folder.agents.filter(agent => !selectedAgents.includes(agent.id))
+    }));
+
+    setFolders(newFolders);
+    setSelectedAgents([]); // Clear selection
+    setIsDeleteDialogOpen(false);
+
+    // Show success message
+    const message = agentNames.length === 1 
+      ? `Agente "${agentNames[0]}" excluído com sucesso.`
+      : `${agentNames.length} agentes excluídos com sucesso.`;
+
+    toast({
+      title: "Agentes excluídos",
+      description: message,
+      duration: 3000,
+    });
+  };
+
+  const handleClearSelection = () => {
+    setSelectedAgents([]);
   };
 
   return (
@@ -310,12 +444,18 @@ export default function AgentList() {
         onCreateFolder={() => setIsFolderModalOpen(true)}
       />
 
+      <AgentActionBar
+        selectedCount={selectedAgents.length}
+        onDeleteSelected={handleDeleteSelectedAgents}
+        onClearSelection={handleClearSelection}
+      />
+
       <div className="flex-1 overflow-auto">
         <AgentTableHeader />
 
         <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <div className="bg-white">
-            {sortedFolders.length === 0 ? (
+            {displayFolders.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500">Nenhum agente encontrado.</p>
                 <p className="text-sm text-gray-400 mt-1">
@@ -323,7 +463,7 @@ export default function AgentList() {
                 </p>
               </div>
             ) : (
-              sortedFolders.map((folder) => (
+              displayFolders.map((folder) => (
                 <AgentFolderItem
                   key={folder.id}
                   folder={folder}
@@ -339,13 +479,32 @@ export default function AgentList() {
         </DragDropContext>
       </div>
 
-      <AgentSelectionFooter selectedCount={selectedAgents.length} />
-
       <FolderCreationModal
         isOpen={isFolderModalOpen}
         onClose={() => setIsFolderModalOpen(false)}
         onCreateFolder={handleCreateFolder}
       />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir agentes</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza de que deseja excluir {selectedAgents.length} agente{selectedAgents.length > 1 ? 's' : ''} selecionado{selectedAgents.length > 1 ? 's' : ''}?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteAgents}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );

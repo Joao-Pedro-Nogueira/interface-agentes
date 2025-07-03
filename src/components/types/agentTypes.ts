@@ -22,6 +22,8 @@ export interface Agent {
   signature: boolean;
   audioAccessibility: boolean;
   primaryAgent: boolean;
+  isActive: boolean;
+  instructions?: string;
   versions?: AgentVersion[];
 }
 
