@@ -23,7 +23,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="px-6 py-3.5 border-b border-gray-200">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">L</span>
