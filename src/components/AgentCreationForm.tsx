@@ -20,7 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function AgentCreationForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { updateAgent, saveAgentVersion, restoreAgentVersion, updateVersionName, updateVersionObservations, folders } = useAgents();
+  const { updateAgent, saveAgentVersion, restoreAgentVersion, updateVersionName, updateVersionObservations, deleteVersion, folders } = useAgents();
   const { toast } = useToast();
   const agentIdFromState = location.state?.agent?.id as string | undefined;
   
@@ -251,6 +251,16 @@ export default function AgentCreationForm() {
       toast({
         title: "Observações atualizadas",
         description: "As observações da versão foram atualizadas com sucesso."
+      });
+    }
+  };
+
+  const handleDeleteVersion = (versionId: string) => {
+    if (currentAgent) {
+      deleteVersion(currentAgent.id, versionId);
+      toast({
+        title: "Versão deletada",
+        description: "A versão foi deletada com sucesso."
       });
     }
   };
@@ -621,6 +631,7 @@ export default function AgentCreationForm() {
                   onRestoreVersion={handleRestoreVersion}
                   onUpdateVersionName={handleUpdateVersionName}
                   onUpdateVersionObservations={handleUpdateVersionObservations}
+                  onDeleteVersion={handleDeleteVersion}
                 />
               </div>
             </TabsContent>

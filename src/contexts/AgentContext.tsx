@@ -13,6 +13,7 @@ interface AgentContextType {
   restoreAgentVersion: (agentId: string, versionId: string) => void;
   updateVersionName: (agentId: string, versionId: string, newName: string) => void;
   updateVersionObservations: (agentId: string, versionId: string, observations: string) => void;
+  deleteVersion: (agentId: string, versionId: string) => void;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
@@ -421,6 +422,24 @@ export function AgentProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const deleteVersion = (agentId: string, versionId: string) => {
+    setFolders(prevFolders => 
+      prevFolders.map(folder => ({
+        ...folder,
+        agents: folder.agents.map(agent => {
+          if (agent.id === agentId) {
+            const updatedVersions = agent.versions?.filter(v => v.id !== versionId);
+            return {
+              ...agent,
+              versions: updatedVersions
+            };
+          }
+          return agent;
+        })
+      }))
+    );
+  };
+
   return (
     <AgentContext.Provider value={{
       folders,
@@ -433,7 +452,8 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       saveAgentVersion,
       restoreAgentVersion,
       updateVersionName,
-      updateVersionObservations
+      updateVersionObservations,
+      deleteVersion
     }}>
       {children}
     </AgentContext.Provider>

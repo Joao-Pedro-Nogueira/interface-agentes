@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { RotateCcw, Eye, Clock, Tag, Check, X, MessageSquare } from 'lucide-react';
+import { RotateCcw, Eye, Clock, Tag, Check, X, MessageSquare, Trash2 } from 'lucide-react';
 import { AgentVersion } from './types/agentTypes';
 
 interface AgentVersionHistoryProps {
@@ -12,6 +12,7 @@ interface AgentVersionHistoryProps {
   onRestoreVersion: (versionId: string) => void;
   onUpdateVersionName: (versionId: string, newName: string) => void;
   onUpdateVersionObservations: (versionId: string, observations: string) => void;
+  onDeleteVersion: (versionId: string) => void;
 }
 
 export default function AgentVersionHistory({ 
@@ -19,12 +20,14 @@ export default function AgentVersionHistory({
   onViewVersion, 
   onRestoreVersion,
   onUpdateVersionName,
-  onUpdateVersionObservations
+  onUpdateVersionObservations,
+  onDeleteVersion
 }: AgentVersionHistoryProps) {
   const [editingVersionId, setEditingVersionId] = useState<string | null>(null);
   const [editingField, setEditingField] = useState<'name' | 'observations' | null>(null);
   const [editingName, setEditingName] = useState('');
   const [editingObservations, setEditingObservations] = useState('');
+  const [deletingVersionId, setDeletingVersionId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -73,6 +76,21 @@ export default function AgentVersionHistory({
     } else if (e.key === 'Escape') {
       handleCancel();
     }
+  };
+
+  const handleDeleteClick = (versionId: string) => {
+    setDeletingVersionId(versionId);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingVersionId) {
+      onDeleteVersion(deletingVersionId);
+      setDeletingVersionId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeletingVersionId(null);
   };
 
   // Reset editing state when versions change (in case of external updates)
@@ -189,6 +207,15 @@ export default function AgentVersionHistory({
                 >
                   <RotateCcw className="w-4 h-4" />
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteClick(version.id)}
+                  className="h-8 px-2 text-red-600 hover:text-red-800 hover:bg-red-50"
+                  title="Deletar versão"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -259,6 +286,43 @@ export default function AgentVersionHistory({
           </CardContent>
         </Card>
       ))}
+
+      {/* Delete Confirmation Modal */}
+      {deletingVersionId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Deletar Versão</h3>
+                <p className="text-sm text-gray-600">Esta ação não pode ser desfeita</p>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-6">
+              Tem certeza que deseja deletar esta versão? Todos os dados da versão serão perdidos permanentemente.
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={handleCancelDelete}
+                className="px-4"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleConfirmDelete}
+                className="px-4 bg-red-600 hover:bg-red-700"
+              >
+                Deletar Versão
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
