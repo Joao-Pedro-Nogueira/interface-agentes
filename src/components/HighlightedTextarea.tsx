@@ -34,9 +34,9 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
       }
     }, [ref]);
 
-    // Find all matches of {{...}} pattern
+    // Find all matches of @tipo:valor pattern
     const findMatches = useCallback((text: string): HighlightMatch[] => {
-      const regex = /\{\{([^}]+)\}\}/g;
+      const regex = /@([\wçãáéíóúâêôõüÇÃÁÉÍÓÚÂÊÔÕÜ]+:[^\s@]+)/g;
       const matches: HighlightMatch[] = [];
       let match;
 
@@ -45,7 +45,7 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
           start: match.index,
           end: match.index + match[0].length,
           content: match[0],
-          innerContent: match[1]
+          innerContent: match[0] // agora mostra o texto completo, incluindo o @
         });
       }
 
@@ -85,14 +85,11 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
     // Render highlighted text
     const renderHighlightedText = useCallback(() => {
       const matches = findMatches(value);
-      
       if (matches.length === 0) {
         return <span className="whitespace-pre-wrap break-words">{value}</span>;
       }
-
       const parts: React.ReactNode[] = [];
       let lastIndex = 0;
-
       matches.forEach((match, index) => {
         // Add text before match
         if (match.start > lastIndex) {
@@ -102,8 +99,7 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             </span>
           );
         }
-
-        // Add highlighted match (showing only inner content)
+        // Add highlighted match (showing the full @tipo:valor)
         parts.push(
           <span
             key={`highlight-${index}`}
@@ -112,10 +108,8 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             {match.innerContent}
           </span>
         );
-
         lastIndex = match.end;
       });
-
       // Add remaining text
       if (lastIndex < value.length) {
         parts.push(
@@ -124,7 +118,6 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
           </span>
         );
       }
-
       return <>{parts}</>;
     }, [value, findMatches]);
 
@@ -186,6 +179,8 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             "absolute inset-0 pointer-events-none overflow-hidden",
             "text-sm bg-transparent w-full text-gray-900",
             "whitespace-pre-wrap break-words",
+            "px-3 py-2 border border-input rounded-md",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             className
           )}
           style={{
@@ -196,6 +191,11 @@ const HighlightedTextarea = React.forwardRef<HTMLTextAreaElement, HighlightedTex
             background: 'transparent',
             width: '100%',
             boxSizing: 'border-box',
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            lineHeight: 'inherit',
+            letterSpacing: 'inherit',
+            wordSpacing: 'inherit',
           }}
         >
           {renderHighlightedText()}

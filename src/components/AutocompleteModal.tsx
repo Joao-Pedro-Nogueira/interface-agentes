@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,55 +25,55 @@ const CATEGORIES: AutocompleteCategory[] = [
     id: 'status',
     label: 'Status',
     items: [
-      { id: 'aguardando', label: 'Aguardando', value: '{{status:Aguardando}}' },
-      { id: 'pausado', label: 'Pausado', value: '{{status:Pausado}}' },
-      { id: 'concluido', label: 'Concluído', value: '{{status:Concluído}}' }
+      { id: 'aguardando', label: 'Aguardando', value: '@status:Aguardando' },
+      { id: 'pausado', label: 'Pausado', value: '@status:Pausado' },
+      { id: 'concluido', label: 'Concluído', value: '@status:Concluído' }
     ]
   },
   {
     id: 'departamentos',
     label: 'Departamentos',
     items: [
-      { id: 'vendas', label: 'Vendas', value: '{{departamento:Vendas}}' },
-      { id: 'marketing', label: 'Marketing', value: '{{departamento:Marketing}}' },
-      { id: 'suporte', label: 'Suporte', value: '{{departamento:Suporte}}' },
-      { id: 'rh', label: 'Recursos Humanos', value: '{{departamento:RH}}' }
+      { id: 'vendas', label: 'Vendas', value: '@departamento:Vendas' },
+      { id: 'marketing', label: 'Marketing', value: '@departamento:Marketing' },
+      { id: 'suporte', label: 'Suporte', value: '@departamento:Suporte' },
+      { id: 'rh', label: 'Recursos Humanos', value: '@departamento:RH' }
     ]
   },
   {
     id: 'etiquetas',
     label: 'Etiquetas',
     items: [
-      { id: 'urgente', label: 'Urgente', value: '{{etiqueta:Urgente}}' },
-      { id: 'importante', label: 'Importante', value: '{{etiqueta:Importante}}' },
-      { id: 'baixa', label: 'Baixa Prioridade', value: '{{etiqueta:Baixa}}' }
+      { id: 'urgente', label: 'Urgente', value: '@etiqueta:Urgente' },
+      { id: 'importante', label: 'Importante', value: '@etiqueta:Importante' },
+      { id: 'baixa', label: 'Baixa Prioridade', value: '@etiqueta:Baixa' }
     ]
   },
   {
     id: 'responsaveis',
     label: 'Responsáveis',
     items: [
-      { id: 'joao', label: 'João Silva', value: '{{responsavel:João Silva}}' },
-      { id: 'maria', label: 'Maria Santos', value: '{{responsavel:Maria Santos}}' },
-      { id: 'pedro', label: 'Pedro Costa', value: '{{responsavel:Pedro Costa}}' }
+      { id: 'joao', label: 'João Silva', value: '@responsavel:João Silva' },
+      { id: 'maria', label: 'Maria Santos', value: '@responsavel:Maria Santos' },
+      { id: 'pedro', label: 'Pedro Costa', value: '@responsavel:Pedro Costa' }
     ]
   },
   {
     id: 'ferramentas',
     label: 'Ferramentas',
     items: [
-      { id: 'email', label: 'Email', value: '{{ferramenta:Email}}' },
-      { id: 'chat', label: 'Chat', value: '{{ferramenta:Chat}}' },
-      { id: 'api', label: 'API', value: '{{ferramenta:API}}' }
+      { id: 'email', label: 'Email', value: '@ferramenta:Email' },
+      { id: 'chat', label: 'Chat', value: '@ferramenta:Chat' },
+      { id: 'api', label: 'API', value: '@ferramenta:API' }
     ]
   },
   {
     id: 'mensagens',
     label: 'Mensagens',
     items: [
-      { id: 'bom-dia', label: 'Bom dia', value: '{{mensagem:Bom dia}}' },
-      { id: 'obrigado', label: 'Obrigado', value: '{{mensagem:Obrigado}}' },
-      { id: 'ate-logo', label: 'Até logo', value: '{{mensagem:Até logo}}' }
+      { id: 'bom-dia', label: 'Bom dia', value: '@mensagem:Bom dia' },
+      { id: 'obrigado', label: 'Obrigado', value: '@mensagem:Obrigado' },
+      { id: 'ate-logo', label: 'Até logo', value: '@mensagem:Até logo' }
     ]
   }
 ];
