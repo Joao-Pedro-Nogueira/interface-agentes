@@ -26,7 +26,13 @@ const initialFolders: AgentFolder[] = [
         tools: [],
         lastRun: '-',
         lastModified: '16 minutos atrás',
-        created: '16 minutos atrás'
+        created: '16 minutos atrás',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false
       }
     ]
   }
@@ -45,7 +51,13 @@ const otherFolders: AgentFolder[] = [
         tools: [],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false
       }
     ]
   },
@@ -61,7 +73,13 @@ const otherFolders: AgentFolder[] = [
         tools: ['🔧'],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: 'Agente especializado em criação de conteúdo otimizado para SEO',
+        keywords: 'SEO, blog, conteúdo, otimização',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false
       },
       {
         id: '4',
@@ -70,7 +88,13 @@ const otherFolders: AgentFolder[] = [
         tools: ['🔧'],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: 'Agente especializado em criação de conteúdo otimizado para SEO',
+        keywords: 'SEO, blog, conteúdo, otimização',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false
       },
       {
         id: '5',
@@ -79,7 +103,13 @@ const otherFolders: AgentFolder[] = [
         tools: [],
         lastRun: '5 meses atrás',
         lastModified: '5 meses atrás',
-        created: '5 meses atrás'
+        created: '5 meses atrás',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false
       }
     ]
   }
