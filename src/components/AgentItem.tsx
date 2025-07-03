@@ -49,47 +49,30 @@ export default function AgentItem({ agent, index, isSelected, onToggleSelection,
               />
             </div>
             
-            <div className="col-span-3">
+            <div className="col-span-4">
               <span className="font-medium text-gray-900">
                 {agent.name}
               </span>
             </div>
             
-            <div className="col-span-3">
-              <span className="text-gray-600">
-                {agent.description || '-'}
-              </span>
-            </div>
-            
-            <div className="col-span-1">
-              <div className="flex space-x-1">
-                {agent.tools.map((tool, toolIndex) => (
-                  <span key={toolIndex} className="text-sm">
-                    {tool}
-                  </span>
-                ))}
-                {agent.tools.length === 0 && (
-                  <span className="text-gray-400">-</span>
-                )}
-              </div>
-            </div>
-            
-            <div className="col-span-1">
-              <span className="text-gray-600">
-                {agent.lastRun}
+            <div className="col-span-4">
+              <span className="text-gray-600 text-sm">
+                {agent.summary || '-'}
               </span>
             </div>
             
             <div className="col-span-2">
-              <span className="text-gray-600">
-                {agent.lastModified}
+              <span className="text-gray-600 text-sm">
+                {agent.keywords || '-'}
               </span>
             </div>
             
             <div className="col-span-1">
-              <span className="text-gray-600">
-                {agent.created}
-              </span>
+              {agent.primaryAgent && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Primário
+                </span>
+              )}
             </div>
           </div>
         </div>

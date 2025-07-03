@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Agent, AgentFolder } from '../components/types/agentTypes';
+import { Agent, AgentFolder, AgentVersion } from '../components/types/agentTypes';
 
 interface AgentContextType {
   folders: AgentFolder[];
@@ -9,6 +9,8 @@ interface AgentContextType {
   deleteAgent: (agentId: string) => void;
   createFolder: (name: string) => boolean;
   deleteFolder: (folderId: string) => void;
+  saveAgentVersion: (agentId: string, changes: string) => void;
+  restoreAgentVersion: (agentId: string, versionId: string) => void;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
@@ -27,7 +29,36 @@ const initialFolders: AgentFolder[] = [
         tools: [],
         lastRun: '-',
         lastModified: '16 minutos atrás',
-        created: '16 minutos atrás'
+        created: '16 minutos atrás',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false,
+        versions: [
+          {
+            id: 'v1-1',
+            version: '1.0.0',
+            timestamp: '16 minutos atrás',
+            changes: 'Versão inicial do agente',
+            agentData: {
+              id: '1',
+              name: 'Agente sem título',
+              description: '',
+              tools: [],
+              lastRun: '-',
+              lastModified: '16 minutos atrás',
+              created: '16 minutos atrás',
+              delay: 0,
+              summary: '',
+              keywords: '',
+              signature: false,
+              audioAccessibility: false,
+              primaryAgent: false,
+            }
+          }
+        ]
       }
     ]
   }
@@ -46,7 +77,36 @@ const otherFolders: AgentFolder[] = [
         tools: [],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false,
+        versions: [
+          {
+            id: 'v2-1',
+            version: '1.0.0',
+            timestamp: 'mês passado',
+            changes: 'Versão inicial do agente',
+            agentData: {
+              id: '2',
+              name: 'pedro',
+              description: '',
+              tools: [],
+              lastRun: '-',
+              lastModified: 'mês passado',
+              created: 'mês passado',
+              delay: 0,
+              summary: '',
+              keywords: '',
+              signature: false,
+              audioAccessibility: false,
+              primaryAgent: false,
+            }
+          }
+        ]
       }
     ]
   },
@@ -62,7 +122,36 @@ const otherFolders: AgentFolder[] = [
         tools: ['🔧'],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: 'Agente especializado em criação de conteúdo SEO',
+        keywords: 'SEO, blog, conteúdo, otimização',
+        signature: true,
+        audioAccessibility: false,
+        primaryAgent: false,
+        versions: [
+          {
+            id: 'v3-1',
+            version: '1.0.0',
+            timestamp: 'mês passado',
+            changes: 'Versão inicial do agente',
+            agentData: {
+              id: '3',
+              name: 'SEO Optimized Blog Writer',
+              description: 'Escreve blogs otimizados para SEO',
+              tools: ['🔧'],
+              lastRun: '-',
+              lastModified: 'mês passado',
+              created: 'mês passado',
+              delay: 0,
+              summary: 'Agente especializado em criação de conteúdo SEO',
+              keywords: 'SEO, blog, conteúdo, otimização',
+              signature: true,
+              audioAccessibility: false,
+              primaryAgent: false,
+            }
+          }
+        ]
       },
       {
         id: '4',
@@ -71,7 +160,36 @@ const otherFolders: AgentFolder[] = [
         tools: ['🔧'],
         lastRun: '-',
         lastModified: 'mês passado',
-        created: 'mês passado'
+        created: 'mês passado',
+        delay: 0,
+        summary: 'Agente especializado em criação de conteúdo SEO',
+        keywords: 'SEO, blog, conteúdo, otimização',
+        signature: true,
+        audioAccessibility: false,
+        primaryAgent: false,
+        versions: [
+          {
+            id: 'v4-1',
+            version: '1.0.0',
+            timestamp: 'mês passado',
+            changes: 'Versão inicial do agente',
+            agentData: {
+              id: '4',
+              name: 'SEO Optimized Blog Writer',
+              description: 'Escreve blogs otimizados para SEO',
+              tools: ['🔧'],
+              lastRun: '-',
+              lastModified: 'mês passado',
+              created: 'mês passado',
+              delay: 0,
+              summary: 'Agente especializado em criação de conteúdo SEO',
+              keywords: 'SEO, blog, conteúdo, otimização',
+              signature: true,
+              audioAccessibility: false,
+              primaryAgent: false,
+            }
+          }
+        ]
       },
       {
         id: '5',
@@ -80,7 +198,36 @@ const otherFolders: AgentFolder[] = [
         tools: [],
         lastRun: '5 meses atrás',
         lastModified: '5 meses atrás',
-        created: '5 meses atrás'
+        created: '5 meses atrás',
+        delay: 0,
+        summary: '',
+        keywords: '',
+        signature: false,
+        audioAccessibility: false,
+        primaryAgent: false,
+        versions: [
+          {
+            id: 'v5-1',
+            version: '1.0.0',
+            timestamp: '5 meses atrás',
+            changes: 'Versão inicial do agente',
+            agentData: {
+              id: '5',
+              name: 'Agente sem título',
+              description: '',
+              tools: [],
+              lastRun: '5 meses atrás',
+              lastModified: '5 meses atrás',
+              created: '5 meses atrás',
+              delay: 0,
+              summary: '',
+              keywords: '',
+              signature: false,
+              audioAccessibility: false,
+              primaryAgent: false,
+            }
+          }
+        ]
       }
     ]
   }
@@ -166,6 +313,67 @@ export function AgentProvider({ children }: { children: ReactNode }) {
     setFolders(newFolders);
   };
 
+  const saveAgentVersion = (agentId: string, changes: string) => {
+    setFolders(prevFolders => 
+      prevFolders.map(folder => ({
+        ...folder,
+        agents: folder.agents.map(agent => {
+          if (agent.id === agentId) {
+            const currentVersion = agent.versions?.length || 0;
+            const newVersion: AgentVersion = {
+              id: `v${agentId}-${currentVersion + 1}`,
+              version: `${Math.floor(currentVersion / 10) + 1}.${(currentVersion % 10) + 1}.0`,
+              timestamp: 'agora',
+              changes,
+              agentData: {
+                id: agent.id,
+                name: agent.name,
+                description: agent.description,
+                tools: agent.tools,
+                lastRun: agent.lastRun,
+                lastModified: agent.lastModified,
+                created: agent.created,
+                delay: agent.delay,
+                summary: agent.summary,
+                keywords: agent.keywords,
+                signature: agent.signature,
+                audioAccessibility: agent.audioAccessibility,
+                primaryAgent: agent.primaryAgent,
+              }
+            };
+
+            return {
+              ...agent,
+              versions: [...(agent.versions || []), newVersion]
+            };
+          }
+          return agent;
+        })
+      }))
+    );
+  };
+
+  const restoreAgentVersion = (agentId: string, versionId: string) => {
+    setFolders(prevFolders => 
+      prevFolders.map(folder => ({
+        ...folder,
+        agents: folder.agents.map(agent => {
+          if (agent.id === agentId) {
+            const versionToRestore = agent.versions?.find(v => v.id === versionId);
+            if (versionToRestore) {
+              return {
+                ...agent,
+                ...versionToRestore.agentData,
+                lastModified: 'agora'
+              };
+            }
+          }
+          return agent;
+        })
+      }))
+    );
+  };
+
   return (
     <AgentContext.Provider value={{
       folders,
@@ -174,7 +382,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       createAgent,
       deleteAgent,
       createFolder,
-      deleteFolder
+      deleteFolder,
+      saveAgentVersion,
+      restoreAgentVersion
     }}>
       {children}
     </AgentContext.Provider>
