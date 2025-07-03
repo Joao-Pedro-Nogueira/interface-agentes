@@ -26,11 +26,11 @@ export default function Sidebar() {
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">T</span>
+            <span className="text-white font-bold text-sm">L</span>
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">Talita</h2>
-            <p className="text-sm text-gray-500">Talita</p>
+            <h2 className="font-semibold text-gray-900">Lider Hub</h2>
+            <p className="text-sm text-gray-500">Lider Hub</p>
           </div>
         </div>
       </div>

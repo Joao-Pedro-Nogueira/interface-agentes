@@ -623,7 +623,7 @@ export default function AgentCreationForm() {
             {/* Histórico Tab */}
             <TabsContent value="historico" className="space-y-6">
               <div className="bg-white rounded-lg p-6 border border-gray-200">
-                <h2 className="text-lg font-semibold mb-4">Histórico de Versões</h2>
+                <h2 className="text-lg font-semibold mb-4">Histórico de Versão</h2>
                 
                 <AgentVersionHistory
                   versions={currentAgent?.versions || []}

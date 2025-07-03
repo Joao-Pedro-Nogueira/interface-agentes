@@ -137,7 +137,7 @@ export default function AgentVersionHistory({
       <div className="flex items-center gap-2 mb-4">
         <Tag className="w-5 h-5 text-gray-600" />
         <h3 className="text-sm font-medium text-gray-700">
-          {versions.length} versão{versions.length !== 1 ? 'ões' : ''} encontrada{versions.length !== 1 ? 's' : ''}
+          {versions.length} {versions.length === 1 ? 'versão' : 'versões'} encontrada{versions.length !== 1 ? 's' : ''}
         </h3>
       </div>
       
