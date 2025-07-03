@@ -22,30 +22,30 @@ export default function AgentCreationForm() {
   const location = useLocation();
   const { updateAgent, saveAgentVersion, restoreAgentVersion, updateVersionName, updateVersionObservations, folders } = useAgents();
   const { toast } = useToast();
-  const agentToEdit = location.state?.agent as Agent | undefined;
+  const agentIdFromState = location.state?.agent?.id as string | undefined;
   
   const [formData, setFormData] = useState({
-    id: agentToEdit?.id || '',
-    name: agentToEdit?.name || '',
-    delay: agentToEdit?.delay || 0,
-    summary: agentToEdit?.summary || '',
-    keywords: agentToEdit?.keywords || '',
-    signature: agentToEdit?.signature || false,
-    audioAccessibility: agentToEdit?.audioAccessibility || false,
-    primaryAgent: agentToEdit?.primaryAgent || false,
+    id: '',
+    name: '',
+    delay: 0,
+    summary: '',
+    keywords: '',
+    signature: false,
+    audioAccessibility: false,
+    primaryAgent: false,
     instructions: '',
     image: null as File | null,
     folderId: 'sem-pasta',
-    description: agentToEdit?.description || '',
-    tools: agentToEdit?.tools || [],
-    lastRun: agentToEdit?.lastRun || '-',
-    lastModified: agentToEdit?.lastModified || '-',
-    created: agentToEdit?.created || '-',
+    description: '',
+    tools: [],
+    lastRun: '-',
+    lastModified: '-',
+    created: '-',
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedVersion, setSelectedVersion] = useState<AgentVersion | null>(null);
-  const [currentAgent, setCurrentAgent] = useState<Agent | undefined>(agentToEdit);
+  const [currentAgent, setCurrentAgent] = useState<Agent | undefined>(undefined);
   
   // Mock folders data - in a real app this would come from props or context
   const mockFolders = [
@@ -93,39 +93,34 @@ export default function AgentCreationForm() {
     }
   }, [autocomplete.isOpen, autocomplete.handleClickOutside]);
 
+  // Get current agent from context and sync form data
   useEffect(() => {
-    if (agentToEdit) {
-      setFormData(prev => ({
-        ...prev,
-        id: agentToEdit.id,
-        name: agentToEdit.name,
-        delay: agentToEdit.delay || 0,
-        summary: agentToEdit.summary || '',
-        keywords: agentToEdit.keywords || '',
-        signature: agentToEdit.signature || false,
-        audioAccessibility: agentToEdit.audioAccessibility || false,
-        primaryAgent: agentToEdit.primaryAgent || false,
-        description: agentToEdit.description || '',
-        tools: agentToEdit.tools || [],
-        lastRun: agentToEdit.lastRun || '-',
-        lastModified: agentToEdit.lastModified || '-',
-        created: agentToEdit.created || '-',
-      }));
-    }
-  }, [agentToEdit]);
-
-  // Sync currentAgent with context changes
-  useEffect(() => {
-    if (agentToEdit) {
-      const updatedAgent = folders
+    if (agentIdFromState) {
+      const agent = folders
         .flatMap(folder => folder.agents)
-        .find(agent => agent.id === agentToEdit.id);
+        .find(agent => agent.id === agentIdFromState);
       
-      if (updatedAgent) {
-        setCurrentAgent(updatedAgent);
+      if (agent) {
+        setCurrentAgent(agent);
+        setFormData(prev => ({
+          ...prev,
+          id: agent.id,
+          name: agent.name,
+          delay: agent.delay || 0,
+          summary: agent.summary || '',
+          keywords: agent.keywords || '',
+          signature: agent.signature || false,
+          audioAccessibility: agent.audioAccessibility || false,
+          primaryAgent: agent.primaryAgent || false,
+          description: agent.description || '',
+          tools: agent.tools || [],
+          lastRun: agent.lastRun || '-',
+          lastModified: agent.lastModified || '-',
+          created: agent.created || '-',
+        }));
       }
     }
-  }, [folders, agentToEdit]);
+  }, [folders, agentIdFromState]);
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
@@ -156,7 +151,7 @@ export default function AgentCreationForm() {
   };
 
   const handleSave = () => {
-    if (agentToEdit) {
+    if (currentAgent) {
       // Update existing agent
       const updatedAgent: Agent = {
         id: formData.id,
@@ -172,7 +167,7 @@ export default function AgentCreationForm() {
         signature: formData.signature,
         audioAccessibility: formData.audioAccessibility,
         primaryAgent: formData.primaryAgent,
-        versions: agentToEdit.versions
+        versions: currentAgent.versions
       };
       
       updateAgent(updatedAgent);
@@ -286,10 +281,10 @@ export default function AgentCreationForm() {
                 </div>
                 <div>
                   <h1 className="text-xl font-semibold">
-                    {agentToEdit ? 'Editar Agente' : 'Novo Agente'}
+                    {currentAgent ? 'Editar Agente' : 'Novo Agente'}
                   </h1>
                   <p className="text-sm text-gray-500">
-                    {agentToEdit ? `Editando: ${formData.name}` : 'Configurar agente'}
+                    {currentAgent ? `Editando: ${formData.name}` : 'Configurar agente'}
                   </p>
                 </div>
               </div>

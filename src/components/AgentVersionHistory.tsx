@@ -22,31 +22,48 @@ export default function AgentVersionHistory({
   onUpdateVersionObservations
 }: AgentVersionHistoryProps) {
   const [editingVersionId, setEditingVersionId] = useState<string | null>(null);
+  const [editingField, setEditingField] = useState<'name' | 'observations' | null>(null);
+  const [editingName, setEditingName] = useState('');
   const [editingObservations, setEditingObservations] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (editingVersionId && inputRef.current) {
+    if (editingVersionId && editingField && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
     }
-  }, [editingVersionId]);
+  }, [editingVersionId, editingField]);
 
-  const handleDoubleClick = (version: AgentVersion) => {
+  const handleDoubleClickName = (version: AgentVersion) => {
     setEditingVersionId(version.id);
+    setEditingField('name');
+    setEditingName(version.version);
+  };
+
+  const handleDoubleClickObservations = (version: AgentVersion) => {
+    setEditingVersionId(version.id);
+    setEditingField('observations');
     setEditingObservations(version.observations || '');
   };
 
   const handleSave = () => {
-    if (editingVersionId) {
-      onUpdateVersionObservations(editingVersionId, editingObservations.trim());
+    if (editingVersionId && editingField) {
+      if (editingField === 'name' && editingName.trim()) {
+        onUpdateVersionName(editingVersionId, editingName.trim());
+      } else if (editingField === 'observations') {
+        onUpdateVersionObservations(editingVersionId, editingObservations.trim());
+      }
       setEditingVersionId(null);
+      setEditingField(null);
+      setEditingName('');
       setEditingObservations('');
     }
   };
 
   const handleCancel = () => {
     setEditingVersionId(null);
+    setEditingField(null);
+    setEditingName('');
     setEditingObservations('');
   };
 
@@ -60,13 +77,17 @@ export default function AgentVersionHistory({
 
   // Reset editing state when versions change (in case of external updates)
   useEffect(() => {
-    if (editingVersionId) {
+    if (editingVersionId && editingField) {
       const currentVersion = versions.find(v => v.id === editingVersionId);
       if (currentVersion) {
-        setEditingObservations(currentVersion.observations || '');
+        if (editingField === 'name') {
+          setEditingName(currentVersion.version);
+        } else if (editingField === 'observations') {
+          setEditingObservations(currentVersion.observations || '');
+        }
       }
     }
-  }, [versions, editingVersionId]);
+  }, [versions, editingVersionId, editingField]);
 
   // Exit editing mode when versions are updated externally
   useEffect(() => {
@@ -74,6 +95,8 @@ export default function AgentVersionHistory({
       const currentVersion = versions.find(v => v.id === editingVersionId);
       if (!currentVersion) {
         setEditingVersionId(null);
+        setEditingField(null);
+        setEditingName('');
         setEditingObservations('');
       }
     }
@@ -106,7 +129,42 @@ export default function AgentVersionHistory({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-base">Versão {version.version}</CardTitle>
+                  {editingVersionId === version.id && editingField === 'name' ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        ref={inputRef}
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        className="h-8 w-32 text-sm"
+                        placeholder="Nome da versão"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={handleSave}
+                        className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700"
+                        disabled={!editingName.trim()}
+                      >
+                        <Check className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleCancel}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <CardTitle 
+                      className="text-base cursor-pointer hover:text-blue-600 transition-colors select-none"
+                      onDoubleClick={() => handleDoubleClickName(version)}
+                      title="Duplo clique para editar nome"
+                    >
+                      Versão {version.version}
+                    </CardTitle>
+                  )}
                   <Badge variant="secondary" className="text-xs">
                     {version.timestamp}
                   </Badge>
@@ -144,7 +202,7 @@ export default function AgentVersionHistory({
                 <span className="text-sm font-medium text-gray-700">Observações</span>
               </div>
               
-              {editingVersionId === version.id ? (
+              {editingVersionId === version.id && editingField === 'observations' ? (
                 <div className="flex items-center gap-2">
                   <Input
                     ref={inputRef}
@@ -173,7 +231,7 @@ export default function AgentVersionHistory({
               ) : (
                 <div 
                   className="text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition-colors select-none min-h-[20px]"
-                  onDoubleClick={() => handleDoubleClick(version)}
+                  onDoubleClick={() => handleDoubleClickObservations(version)}
                   title="Duplo clique para editar observações"
                 >
                   {version.observations || 'Clique duas vezes para adicionar observações...'}
